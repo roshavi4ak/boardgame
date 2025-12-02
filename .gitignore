@@ -1,0 +1,9 @@
+# Ignore common folders
+node_modules/
+.vscode/
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
