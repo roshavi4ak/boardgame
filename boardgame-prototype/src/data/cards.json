@@ -1,0 +1,429 @@
+{
+  "guilds": [
+    {
+      "name": "military",
+      "cards": [
+        {
+          "id": "military-blue-1",
+          "color": "blue",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-blue-2",
+          "color": "blue",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Army",
+          "guild": "military"
+        },
+        {
+          "id": "military-red-1",
+          "color": "red",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-red-2",
+          "color": "red",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Army",
+          "guild": "military"
+        },
+        {
+          "id": "military-green-1",
+          "color": "green",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "military"
+        },
+        {
+          "id": "military-green-2",
+          "color": "green",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-yellow-1",
+          "color": "yellow",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-yellow-2",
+          "color": "yellow",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "military"
+        },
+        {
+          "id": "military-purple-1",
+          "color": "purple",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 VP",
+          "guild": "military"
+        },
+        {
+          "id": "military-purple-2",
+          "color": "purple",
+          "position": 1,
+          "power": "Army. Pay 1 Gold → Army",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        }
+      ]
+    },
+    {
+      "name": "culture",
+      "cards": [
+        {
+          "id": "culture-blue-1",
+          "color": "blue",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-blue-2",
+          "color": "blue",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-red-1",
+          "color": "red",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-red-2",
+          "color": "red",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-green-1",
+          "color": "green",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-green-2",
+          "color": "green",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-yellow-1",
+          "color": "yellow",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-yellow-2",
+          "color": "yellow",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-purple-1",
+          "color": "purple",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 VP",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-purple-2",
+          "color": "purple",
+          "position": 1,
+          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "culture"
+        }
+      ]
+    },
+    {
+      "name": "technology",
+      "cards": [
+        {
+          "id": "technology-blue-1",
+          "color": "blue",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-blue-2",
+          "color": "blue",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-red-1",
+          "color": "red",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-red-2",
+          "color": "red",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-green-1",
+          "color": "green",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-green-2",
+          "color": "green",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-yellow-1",
+          "color": "yellow",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-yellow-2",
+          "color": "yellow",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-purple-1",
+          "color": "purple",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 VP",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-purple-2",
+          "color": "purple",
+          "position": 1,
+          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
+          "bonus": "Gain 1 Gold",
+          "guild": "technology"
+        }
+      ]
+    },
+    {
+      "name": "royal",
+      "cards": [
+        {
+          "id": "royal-blue-1",
+          "color": "blue",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Gold",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-blue-2",
+          "color": "blue",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-red-1",
+          "color": "red",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Gold",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-red-2",
+          "color": "red",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-green-1",
+          "color": "green",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Gold",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-green-2",
+          "color": "green",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-yellow-1",
+          "color": "yellow",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Gold",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-yellow-2",
+          "color": "yellow",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-purple-1",
+          "color": "purple",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 VP",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-purple-2",
+          "color": "purple",
+          "position": 1,
+          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
+          "bonus": "Gain 1 Gold",
+          "guild": "royal"
+        }
+      ]
+    },
+    {
+      "name": "building",
+      "cards": [
+        {
+          "id": "building-blue-1",
+          "color": "blue",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "building"
+        },
+        {
+          "id": "building-blue-2",
+          "color": "blue",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "building"
+        },
+        {
+          "id": "building-red-1",
+          "color": "red",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "building"
+        },
+        {
+          "id": "building-red-2",
+          "color": "red",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "building"
+        },
+        {
+          "id": "building-green-1",
+          "color": "green",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "building"
+        },
+        {
+          "id": "building-green-2",
+          "color": "green",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "building"
+        },
+        {
+          "id": "building-yellow-1",
+          "color": "yellow",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "building"
+        },
+        {
+          "id": "building-yellow-2",
+          "color": "yellow",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Knowledge",
+          "guild": "building"
+        },
+        {
+          "id": "building-purple-1",
+          "color": "purple",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 VP",
+          "guild": "building"
+        },
+        {
+          "id": "building-purple-2",
+          "color": "purple",
+          "position": 1,
+          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "building"
+        }
+      ]
+    }
+  ]
+}

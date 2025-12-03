@@ -1,0 +1,188 @@
+{
+  "gridSize": 5,
+  "totalSpots": 20,
+  "spots": [
+    {
+      "id": 1,
+      "type": "starting",
+      "position": { "row": 0, "col": 0 },
+      "adjacent": [2, 6],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 2,
+      "type": "normal",
+      "position": { "row": 0, "col": 1 },
+      "adjacent": [1, 3, 7],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 3,
+      "type": "normal",
+      "position": { "row": 0, "col": 2 },
+      "adjacent": [2, 4, 8],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 4,
+      "type": "normal",
+      "position": { "row": 0, "col": 3 },
+      "adjacent": [3, 5, 9],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 5,
+      "type": "outpost",
+      "position": { "row": 0, "col": 4 },
+      "adjacent": [4, 10],
+      "isOutpost": true,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 6,
+      "type": "normal",
+      "position": { "row": 1, "col": 0 },
+      "adjacent": [1, 7, 11],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 7,
+      "type": "normal",
+      "position": { "row": 1, "col": 1 },
+      "adjacent": [2, 6, 8, 12],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 8,
+      "type": "normal",
+      "position": { "row": 1, "col": 2 },
+      "adjacent": [3, 7, 9, 13],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 9,
+      "type": "normal",
+      "position": { "row": 1, "col": 3 },
+      "adjacent": [4, 8, 10, 14],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 10,
+      "type": "outpost",
+      "position": { "row": 1, "col": 4 },
+      "adjacent": [5, 9, 15],
+      "isOutpost": true,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 11,
+      "type": "normal",
+      "position": { "row": 2, "col": 0 },
+      "adjacent": [6, 12, 16],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 12,
+      "type": "normal",
+      "position": { "row": 2, "col": 1 },
+      "adjacent": [7, 11, 13, 17],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 13,
+      "type": "normal",
+      "position": { "row": 2, "col": 2 },
+      "adjacent": [8, 12, 14, 18],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 14,
+      "type": "normal",
+      "position": { "row": 2, "col": 3 },
+      "adjacent": [9, 13, 15, 19],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 15,
+      "type": "outpost",
+      "position": { "row": 2, "col": 4 },
+      "adjacent": [10, 14, 20],
+      "isOutpost": true,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 16,
+      "type": "normal",
+      "position": { "row": 3, "col": 0 },
+      "adjacent": [11, 17],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 17,
+      "type": "normal",
+      "position": { "row": 3, "col": 1 },
+      "adjacent": [12, 16, 18],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 18,
+      "type": "normal",
+      "position": { "row": 3, "col": 2 },
+      "adjacent": [13, 17, 19],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 19,
+      "type": "normal",
+      "position": { "row": 3, "col": 3 },
+      "adjacent": [14, 18, 20],
+      "isOutpost": false,
+      "occupyingPlayer": null,
+      "armies": 0
+    },
+    {
+      "id": 20,
+      "type": "outpost",
+      "position": { "row": 3, "col": 4 },
+      "adjacent": [15, 19],
+      "isOutpost": true,
+      "occupyingPlayer": null,
+      "armies": 0
+    }
+  ],
+  "startingPositions": [1, 5],
+  "outpostPositions": [5, 10, 15, 20]
+}
