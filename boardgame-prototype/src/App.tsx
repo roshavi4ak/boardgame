@@ -33,7 +33,11 @@ function App() {
     const newGameState = engine.initializeGame(playerNames);
     console.log('New game state:', newGameState);
     console.log('Player 1 hand:', newGameState.players[0]?.hand);
-    setGameState(newGameState);
+
+    // Initialize market with 5 cards from common deck
+    const stateWithMarket = engine.initializeMarket();
+
+    setGameState(stateWithMarket);
     setGameStarted(true);
   };
 
@@ -59,13 +63,22 @@ function App() {
     const newState = engine.processAction(action);
     setGameState(newState);
 
-    // Clear any existing prompts when playing a new card
+    // Debug: Log state before clearing prompts
+    console.log('DEBUG: Before clearing prompts - pendingConditionalPowers:', newState.pendingConditionalPowers);
+    console.log('DEBUG: Before clearing prompts - pendingChoicePowers:', newState.pendingChoicePowers);
+
+    // Clear any existing prompts when playing a new card (treat as "no" to any existing prompts)
     setConditionalPowerPrompt(null);
     setChoicePowerPrompt(null);
+
+    // Debug: Log state after clearing prompts
+    console.log('DEBUG: After clearing prompts - pendingConditionalPowers:', newState.pendingConditionalPowers);
+    console.log('DEBUG: After clearing prompts - pendingChoicePowers:', newState.pendingChoicePowers);
 
     // Check if there are choice powers to handle first (priority over conditional)
     if (newState.pendingChoicePowers && newState.pendingChoicePowers.length > 0) {
       const firstChoicePower = newState.pendingChoicePowers[0];
+      console.log('DEBUG: Showing choice power prompt:', firstChoicePower.fullText);
       setChoicePowerPrompt({
         power: firstChoicePower.fullText,
         choices: firstChoicePower.choices,
@@ -75,11 +88,14 @@ function App() {
     // Check if there are conditional powers to handle
     else if (newState.pendingConditionalPowers && newState.pendingConditionalPowers.length > 0) {
       const firstConditionalPower = newState.pendingConditionalPowers[0];
+      console.log('DEBUG: Showing conditional power prompt:', firstConditionalPower.fullText);
       setConditionalPowerPrompt({
         power: firstConditionalPower.fullText,
         onYes: () => handleConditionalPowerResponse(true, firstConditionalPower, newState),
         onNo: () => handleConditionalPowerResponse(false, firstConditionalPower, newState)
       });
+    } else {
+      console.log('DEBUG: No prompts to show');
     }
   };
 
@@ -129,8 +145,64 @@ function App() {
       return;
     }
 
-    // Execute the conditional power
     const currentPlayer = currentState.players[currentState.currentPlayerIndex];
+    const normalizedLeft = engine.normalizeText(power.left);
+
+    // Check if this conditional power requires discard
+    if (normalizedLeft.includes('discard') && normalizedLeft.includes('card')) {
+      // Execute the conditional power to set discard requirement
+      engine.executeConditionalPower(currentPlayer, power.left, power.right);
+
+      // Don't remove the conditional power from the queue yet
+      // Keep it in the queue so we can process the right part after discard is complete
+      setGameState(currentState);
+      setConditionalPowerPrompt(null);
+
+      // Don't execute the right part yet - wait for discard to complete
+      // The discard requirement is now set in player.resources.discardCards
+      return;
+    }
+
+    // Check if this conditional power has nested choices (right part contains "or")
+    if (power.nestedChoices && power.nestedChoices.length > 0) {
+      console.log('DEBUG: Conditional power has nested choices:', power.nestedChoices);
+
+      // Show choice prompt for the nested choices
+      setConditionalPowerPrompt(null);
+      setChoicePowerPrompt({
+        power: `What do you want? (from: ${power.fullText})`,
+        choices: power.nestedChoices,
+        onChoice: (choice: string) => {
+          console.log('DEBUG: Nested choice selected:', choice);
+
+          // Execute the conditional power with the specific choice
+          engine.executeConditionalPower(currentPlayer, power.left, choice);
+
+          // Remove the conditional power from the queue
+          const updatedState = {...currentState};
+          updatedState.pendingConditionalPowers = updatedState.pendingConditionalPowers.filter(
+            (p: any) => p.fullText !== power.fullText
+          );
+
+          setGameState(updatedState);
+          setChoicePowerPrompt(null); // Close the choice prompt after selection
+
+          // Check if there are more conditional powers to handle
+          if (updatedState.pendingConditionalPowers && updatedState.pendingConditionalPowers.length > 0) {
+            const nextConditionalPower = updatedState.pendingConditionalPowers[0];
+            console.log('DEBUG: Showing next conditional power prompt:', nextConditionalPower.fullText);
+            setConditionalPowerPrompt({
+              power: nextConditionalPower.fullText,
+              onYes: () => handleConditionalPowerResponse(true, nextConditionalPower, updatedState),
+              onNo: () => handleConditionalPowerResponse(false, nextConditionalPower, updatedState)
+            });
+          }
+        }
+      });
+      return;
+    }
+
+    // Execute the conditional power (no nested choices, no discard requirement)
     engine.executeConditionalPower(currentPlayer, power.left, power.right);
 
     // Remove the conditional power from the queue
@@ -185,6 +257,105 @@ function App() {
 
     const newState = engine.processAction(action);
     setGameState(newState);
+  };
+
+  const handleDrawAction = () => {
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.resources.drawCards && currentPlayer.resources.drawCards > 0) {
+      const newState = engine.drawCard(currentPlayer.id);
+      setGameState(newState);
+    }
+  };
+
+  const handleTakeAction = (cardId: string) => {
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.resources.takeCards && currentPlayer.resources.takeCards > 0) {
+      const newState = engine.takeCardFromMarket(currentPlayer.id, cardId);
+      setGameState(newState);
+    }
+  };
+
+  const handleDiscardAction = (cardId: string) => {
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.resources.discardCards && currentPlayer.resources.discardCards > 0) {
+      console.log('DEBUG: Starting discard action');
+      console.log('DEBUG: Current discard requirement:', currentPlayer.resources.discardCards);
+      console.log('DEBUG: Pending conditional powers:', gameState.pendingConditionalPowers);
+
+      const newState = engine.discardCard(currentPlayer.id, cardId);
+      console.log('DEBUG: After discard - new state:', newState);
+
+      setGameState(newState);
+
+      // Check if discard requirement is now fulfilled and execute any pending conditional benefits
+      const updatedPlayer = newState.players[newState.currentPlayerIndex];
+      console.log('DEBUG: Updated player discardCards:', updatedPlayer.resources.discardCards);
+
+      if (updatedPlayer.resources.discardCards === 0) {
+        console.log('DEBUG: Discard requirement fulfilled, checking for conditional benefits');
+
+        // Use the existing GameEngine's conditional power execution system
+        if (gameState.pendingConditionalPowers && gameState.pendingConditionalPowers.length > 0) {
+          const conditionalPower = gameState.pendingConditionalPowers[0];
+          console.log('DEBUG: Found conditional power:', conditionalPower.fullText);
+
+          // Check if this is a discard->benefit conditional power (case-insensitive)
+          const normalizedPowerText = conditionalPower.fullText.toLowerCase();
+          if (normalizedPowerText.includes('discard') && (conditionalPower.fullText.includes('->') || conditionalPower.fullText.includes('→'))) {
+            console.log('DEBUG: This is a discard->benefit conditional power');
+
+            // Check if the right part contains "or" choices that need player selection (case-insensitive)
+            if (conditionalPower.right.toLowerCase().includes(' or ')) {
+              console.log('DEBUG: Right part contains choices, showing choice prompt');
+
+              // Show choice prompt for the player to select which benefit they want
+              setChoicePowerPrompt({
+                power: `Choose your benefit: ${conditionalPower.right}`,
+                choices: conditionalPower.right.split(' or ').map((choice: string) => choice.trim()),
+                onChoice: (choice: string) => {
+                  console.log('DEBUG: Player chose benefit:', choice);
+
+                  // Execute only the chosen benefit using the new GameEngine method
+                  engine.executeConditionalPowerBenefitOnly(updatedPlayer, choice);
+
+                  // Remove the conditional power from the queue
+                  const finalState = {...newState};
+                  finalState.pendingConditionalPowers = (finalState.pendingConditionalPowers || []).filter(
+                    (p: any) => p.fullText !== conditionalPower.fullText
+                  );
+                  console.log('DEBUG: Final state after removing conditional power:', finalState);
+                  setGameState(finalState);
+                  setChoicePowerPrompt(null);
+                }
+              });
+            } else {
+              // Execute only the right part (benefit) using the new GameEngine method
+              engine.executeConditionalPowerBenefitOnly(updatedPlayer, conditionalPower.right);
+
+              // Remove the conditional power from the queue
+              const finalState = {...newState};
+              finalState.pendingConditionalPowers = (finalState.pendingConditionalPowers || []).filter(
+                (p: any) => p.fullText !== conditionalPower.fullText
+              );
+              console.log('DEBUG: Final state after removing conditional power:', finalState);
+              setGameState(finalState);
+            }
+          } else {
+            console.log('DEBUG: Conditional power does not match discard->benefit pattern');
+          }
+        } else {
+          console.log('DEBUG: No pending conditional powers found');
+        }
+      } else {
+        console.log('DEBUG: Discard requirement not yet fulfilled, remaining:', updatedPlayer.resources.discardCards);
+      }
+    }
   };
 
   if (!gameStarted) {
@@ -262,6 +433,37 @@ function App() {
           </div>
         </div>
 
+        {/* Market Section for Take functionality */}
+        {(gameState?.market && gameState.market.length > 0) && (
+          <div className="market-section">
+            <h2>Market</h2>
+            <div className="market-cards">
+              {gameState.market.map((card: any) => (
+                <div key={card.id} className="market-card">
+                  <div className="card-guild">{card.guild}</div>
+                  <div className="card-color" style={{ backgroundColor: card.color }}>
+                    {card.color}
+                  </div>
+                  <div className="card-powers">
+                    <div>1: {card.power1}</div>
+                    <div>2-3: {card.power23}</div>
+                    <div>4-5: {card.power45}</div>
+                    <div>Bonus: {card.bonus}</div>
+                  </div>
+                  {currentPlayer?.resources?.takeCards && currentPlayer.resources.takeCards > 0 && (
+                    <button
+                      onClick={() => handleTakeAction(card.id)}
+                      className="take-button"
+                    >
+                      +
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="player-section">
           <h2>Your Hand</h2>
           <div className="hand-cards">
@@ -269,7 +471,13 @@ function App() {
               <div
                 key={card.id}
                 className="card"
-                onClick={() => handleExpandAction(card.id)}
+                onClick={() => {
+                  if (currentPlayer.resources.discardCards && currentPlayer.resources.discardCards > 0) {
+                    handleDiscardAction(card.id);
+                  } else {
+                    handleExpandAction(card.id);
+                  }
+                }}
               >
                 <div className="card-guild">{card.guild}</div>
                 <div className="card-color" style={{ backgroundColor: card.color }}>
@@ -281,6 +489,9 @@ function App() {
                   <div>4-5: {card.power45}</div>
                   <div>Bonus: {card.bonus}</div>
                 </div>
+                {currentPlayer?.resources?.discardCards && currentPlayer.resources.discardCards > 0 && (
+                  <div className="discard-overlay">Discard</div>
+                )}
               </div>
             ))}
           </div>
@@ -318,13 +529,27 @@ function App() {
             <p>Knowledge: {currentPlayer?.resources?.knowledge}</p>
             <p>Victory Points: {currentPlayer?.resources?.victoryPoints}</p>
             <p>Armies: {currentPlayer?.armies}</p>
-            <p>Draw card: {currentPlayer?.resources?.drawCards || 0}</p>
-            <p>Take card: {currentPlayer?.resources?.takeCards || 0}</p>
-            <p>Discard card: {currentPlayer?.resources?.discardCards || 0}</p>
-            <p>Exile card: {currentPlayer?.resources?.exileCards || 0}</p>
-            <p>Bury card: {currentPlayer?.resources?.buryCards || 0}</p>
-            <p>Fight: {currentPlayer?.resources?.fight || 0}</p>
-            <p>Outpost: {currentPlayer?.resources?.outpost || 0}</p>
+            <p className="draw-resource">
+              {(() => {
+                const drawValue = currentPlayer?.resources?.drawCards ?? 0;
+                console.log('DEBUG: Draw resource value:', drawValue, 'type:', typeof drawValue);
+                return (
+                  <>
+                    Draw card: {drawValue}
+                    {currentPlayer?.resources?.drawCards && currentPlayer.resources.drawCards > 0 && (
+                      <button onClick={handleDrawAction} className="draw-button">Draw</button>
+                    )}
+                  </>
+                );
+              })()}
+            </p>
+            <p>Take card: {currentPlayer?.resources?.takeCards ?? 0}</p>
+            <p>Discard card: {currentPlayer?.resources?.discardCards ?? 0}</p>
+            <p>Exile card: {currentPlayer?.resources?.exileCards ?? 0}</p>
+            <p>Bury card: {currentPlayer?.resources?.buryCards ?? 0}</p>
+            <p>Fight: {currentPlayer?.resources?.fight ?? 0}</p>
+            <p>Outpost: {currentPlayer?.resources?.outpost ?? 0}</p>
+            <p>Revive: {currentPlayer?.resources?.revive ?? 0}</p>
           </div>
 
           <div className="guild-piles">
@@ -378,7 +603,7 @@ function App() {
         <button
           onClick={handleEndTurnAction}
           className="action-button"
-          disabled={gameState?.phase !== 'playing'}
+          disabled={gameState?.phase !== 'playing' && gameState?.phase !== 'setup'}
         >
           End Turn
         </button>
