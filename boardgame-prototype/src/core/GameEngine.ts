@@ -1,5 +1,5 @@
 // Moved all required types here to avoid circular dependencies
-type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'building';
+type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'trade';
 type Color = 'blue' | 'red' | 'green' | 'yellow' | 'purple';
 type PlayerId = string;
 type GamePhase = 'setup' | 'playing' | 'ended';
@@ -8,8 +8,9 @@ interface Card {
   id: string;
   guild: Guild;
   color: Color;
-  position: number;
-  power: string;
+  power1: string;
+  power23: string;
+  power45: string;
   bonus: string;
 }
 
@@ -89,10 +90,10 @@ export class GameEngine {
     }
 
     if (players.length >= 2) {
-      // Player 2 gets 2 blue building cards
-      const blueBuildingCards = commonDeck.filter(c => c.guild === 'building' && c.color === 'blue');
-      for (let i = 0; i < 2 && blueBuildingCards.length > 0; i++) {
-        const cardIndex = commonDeck.findIndex(c => c.id === blueBuildingCards[i].id);
+      // Player 2 gets 2 blue trade cards
+      const blueTradeCards = commonDeck.filter(c => c.guild === 'trade' && c.color === 'blue');
+      for (let i = 0; i < 2 && blueTradeCards.length > 0; i++) {
+        const cardIndex = commonDeck.findIndex(c => c.id === blueTradeCards[i].id);
         if (cardIndex !== -1) {
           players[1].hand.push(commonDeck.splice(cardIndex, 1)[0]);
         }
@@ -242,7 +243,7 @@ export class GameEngine {
         culture: [],
         technology: [],
         royal: [],
-        building: []
+        trade: []
       },
       resources: {
         gold: 5,
@@ -262,8 +263,9 @@ export class GameEngine {
           id: cardData.id,
           guild: cardData.guild as Guild,
           color: cardData.color as Color,
-          position: cardData.position,
-          power: cardData.power,
+          power1: cardData.power1,
+          power23: cardData.power23,
+          power45: cardData.power45,
           bonus: cardData.bonus
         });
       });
@@ -275,6 +277,7 @@ export class GameEngine {
   private initializeMap(): MapSpot[] {
     return mapData.spots.map(spot => ({
       ...spot,
+      type: spot.type as 'normal' | 'starting' | 'outpost',
       occupyingPlayer: null,
       armies: 0
     }));
@@ -361,30 +364,31 @@ export class GameEngine {
     // Determine power level based on position in guild pile
     // position is the card's position in the pile (1-based)
     const position = guildPile.length; // Current length after adding the card
-    let powerMultiplier = 1;
 
-    // Apply power scaling
-    if (position >= 4) {
-      powerMultiplier = 2; // 4th/5th cards are more powerful
-    } else if (position >= 2) {
-      powerMultiplier = 1.5; // 2nd/3rd cards are enhanced
+    // Select the appropriate power based on position
+    let powerText = '';
+    if (position === 1) {
+      powerText = card.power1;
+    } else if (position >= 2 && position <= 3) {
+      powerText = card.power23;
+    } else if (position >= 4 && position <= 5) {
+      powerText = card.power45;
     }
-    // 1st card: powerMultiplier = 1 (default)
 
-    // Parse and execute card power with scaling
-    const powerParts = card.power.split('.');
+    // Parse and execute the selected power
+    const powerParts = powerText.split('.');
     powerParts.forEach(part => {
       const trimmed = part.trim();
       if (trimmed === 'Army') {
-        player.armies += 1 * powerMultiplier;
+        player.armies += 1;
       } else if (trimmed === 'Pay 1 Gold → Army') {
         // This is an optional power, don't apply automatically
       } else if (trimmed.includes('Gold') && !trimmed.includes('→')) {
-        player.resources.gold += 1 * powerMultiplier;
+        player.resources.gold += 1;
       } else if (trimmed.includes('Knowledge') && !trimmed.includes('→')) {
-        player.resources.knowledge += 1 * powerMultiplier;
+        player.resources.knowledge += 1;
       } else if (trimmed.includes('VP') && !trimmed.includes('→')) {
-        player.resources.victoryPoints += 1 * powerMultiplier;
+        player.resources.victoryPoints += 1;
       }
     });
 

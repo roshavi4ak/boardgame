@@ -1,4 +1,4 @@
-export type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'building';
+export type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'trade';
 export type Color = 'blue' | 'red' | 'green' | 'yellow' | 'purple';
 export type PlayerId = string;
 export type GamePhase = 'setup' | 'playing' | 'ended';

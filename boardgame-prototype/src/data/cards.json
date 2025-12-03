@@ -4,82 +4,92 @@
       "name": "military",
       "cards": [
         {
-          "id": "military-blue-1",
+          "id": "military-blue-type1",
           "color": "blue",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
+          "power1": "Army. Pay 1 Gold -> Fight",
+          "power23": "Army. Fight",
+          "power45": "Army. Fight. Pay 1 Gold -> build Outpost",
           "bonus": "Gain 1 Gold",
           "guild": "military"
         },
         {
-          "id": "military-blue-2",
+          "id": "military-red-type1",
+          "color": "red",
+          "power1": "Army. Pay 1 Gold -> Fight",
+          "power23": "Army. Fight",
+          "power45": "Army. Fight. Pay 1 Gold -> build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-green-type1",
+          "color": "green",
+          "power1": "Army. Pay 1 Gold -> Fight",
+          "power23": "Army. Fight",
+          "power45": "Army. Fight. Pay 1 Gold -> build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-yellow-type1",
+          "color": "yellow",
+          "power1": "Army. Pay 1 Gold -> Fight",
+          "power23": "Army. Fight",
+          "power45": "Army. Fight. Pay 1 Gold -> build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-purple-type1",
+          "color": "purple",
+          "power1": "Army. Pay 1 Gold -> Fight",
+          "power23": "Army. Fight",
+          "power45": "Army. Fight. Pay 1 Gold -> build Outpost",
+          "bonus": "Gain 1 Gold",
+          "guild": "military"
+        },
+        {
+          "id": "military-blue-type2",
           "color": "blue",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
-          "bonus": "Gain 1 Army",
+          "power1": "Army. Pay 1 Gold -> Army",
+          "power23": "Army (x2)",
+          "power45": "Army (x2). Discard 1 card -> 1 VP",
+          "bonus": "Gain 1 Gold",
           "guild": "military"
         },
         {
-          "id": "military-red-1",
+          "id": "military-red-type2",
           "color": "red",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
+          "power1": "Army. Pay 1 Gold -> Army",
+          "power23": "Army (x2)",
+          "power45": "Army (x2). Discard 1 card -> 1 VP",
           "bonus": "Gain 1 Gold",
           "guild": "military"
         },
         {
-          "id": "military-red-2",
-          "color": "red",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
-          "bonus": "Gain 1 Army",
-          "guild": "military"
-        },
-        {
-          "id": "military-green-1",
+          "id": "military-green-type2",
           "color": "green",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "military"
-        },
-        {
-          "id": "military-green-2",
-          "color": "green",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
+          "power1": "Army. Pay 1 Gold -> Army",
+          "power23": "Army (x2)",
+          "power45": "Army (x2). Discard 1 card -> 1 VP",
           "bonus": "Gain 1 Gold",
           "guild": "military"
         },
         {
-          "id": "military-yellow-1",
+          "id": "military-yellow-type2",
           "color": "yellow",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
+          "power1": "Army. Pay 1 Gold -> Army",
+          "power23": "Army (x2)",
+          "power45": "Army (x2). Discard 1 card -> 1 VP",
           "bonus": "Gain 1 Gold",
           "guild": "military"
         },
         {
-          "id": "military-yellow-2",
-          "color": "yellow",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "military"
-        },
-        {
-          "id": "military-purple-1",
+          "id": "military-purple-type2",
           "color": "purple",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
-          "bonus": "Gain 1 VP",
-          "guild": "military"
-        },
-        {
-          "id": "military-purple-2",
-          "color": "purple",
-          "position": 1,
-          "power": "Army. Pay 1 Gold → Army",
+          "power1": "Army. Pay 1 Gold -> Army",
+          "power23": "Army (x2)",
+          "power45": "Army (x2). Discard 1 card -> 1 VP",
           "bonus": "Gain 1 Gold",
           "guild": "military"
         }
@@ -89,83 +99,93 @@
       "name": "culture",
       "cards": [
         {
-          "id": "culture-blue-1",
+          "id": "culture-blue-type1",
           "color": "blue",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge. Bury 1 card -> gain 1 knowledge",
+          "power45": "Gain 1 knowledge. Bury 1 card -> Exile 1 card",
+          "bonus": "Gain 1 knowledge",
           "guild": "culture"
         },
         {
-          "id": "culture-blue-2",
+          "id": "culture-red-type1",
+          "color": "red",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge. Bury 1 card -> gain 1 knowledge",
+          "power45": "Gain 1 knowledge. Bury 1 card -> Exile 1 card",
+          "bonus": "Gain 1 knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-green-type1",
+          "color": "green",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge. Bury 1 card -> gain 1 knowledge",
+          "power45": "Gain 1 knowledge. Bury 1 card -> Exile 1 card",
+          "bonus": "Gain 1 knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-yellow-type1",
+          "color": "yellow",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge. Bury 1 card -> gain 1 knowledge",
+          "power45": "Gain 1 knowledge. Bury 1 card -> Exile 1 card",
+          "bonus": "Gain 1 knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-purple-type1",
+          "color": "purple",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge. Bury 1 card -> gain 1 knowledge",
+          "power45": "Gain 1 knowledge. Bury 1 card -> Exile 1 card",
+          "bonus": "Gain 1 knowledge",
+          "guild": "culture"
+        },
+        {
+          "id": "culture-blue-type2",
           "color": "blue",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Gold",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge and Fight",
+          "power45": "Gain 1 knowledge. Fight or 1 VP",
+          "bonus": "Draw 1 card or Revive 1 card",
           "guild": "culture"
         },
         {
-          "id": "culture-red-1",
+          "id": "culture-red-type2",
           "color": "red",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge and Fight",
+          "power45": "Gain 1 knowledge. Fight or 1 VP",
+          "bonus": "Draw 1 card or Revive 1 card",
           "guild": "culture"
         },
         {
-          "id": "culture-red-2",
-          "color": "red",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Gold",
-          "guild": "culture"
-        },
-        {
-          "id": "culture-green-1",
+          "id": "culture-green-type2",
           "color": "green",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge and Fight",
+          "power45": "Gain 1 knowledge. Fight or 1 VP",
+          "bonus": "Draw 1 card or Revive 1 card",
           "guild": "culture"
         },
         {
-          "id": "culture-green-2",
-          "color": "green",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Gold",
-          "guild": "culture"
-        },
-        {
-          "id": "culture-yellow-1",
+          "id": "culture-yellow-type2",
           "color": "yellow",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge and Fight",
+          "power45": "Gain 1 knowledge. Fight or 1 VP",
+          "bonus": "Draw 1 card or Revive 1 card",
           "guild": "culture"
         },
         {
-          "id": "culture-yellow-2",
-          "color": "yellow",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Gold",
-          "guild": "culture"
-        },
-        {
-          "id": "culture-purple-1",
+          "id": "culture-purple-type2",
           "color": "purple",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 VP",
-          "guild": "culture"
-        },
-        {
-          "id": "culture-purple-2",
-          "color": "purple",
-          "position": 1,
-          "power": "Gain Knowledge. Pay 1 Knowledge → Draw 1",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Gain 1 knowledge",
+          "power23": "Gain 1 knowledge and Fight",
+          "power45": "Gain 1 knowledge. Fight or 1 VP",
+          "bonus": "Draw 1 card or Revive 1 card",
           "guild": "culture"
         }
       ]
@@ -174,83 +194,93 @@
       "name": "technology",
       "cards": [
         {
-          "id": "technology-blue-1",
+          "id": "technology-blue-type1",
           "color": "blue",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Gold",
+          "power1": "Draw 1 card",
+          "power23": "Draw 1 card or Gain 1 knowledge",
+          "power45": "Take 1 card or Gain 1 VP",
+          "bonus": "Gain 1 knowledge",
           "guild": "technology"
         },
         {
-          "id": "technology-blue-2",
+          "id": "technology-red-type1",
+          "color": "red",
+          "power1": "Draw 1 card",
+          "power23": "Draw 1 card or Gain 1 knowledge",
+          "power45": "Take 1 card or Gain 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-green-type1",
+          "color": "green",
+          "power1": "Draw 1 card",
+          "power23": "Draw 1 card or Gain 1 knowledge",
+          "power45": "Take 1 card or Gain 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-yellow-type1",
+          "color": "yellow",
+          "power1": "Draw 1 card",
+          "power23": "Draw 1 card or Gain 1 knowledge",
+          "power45": "Take 1 card or Gain 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-purple-type1",
+          "color": "purple",
+          "power1": "Draw 1 card",
+          "power23": "Draw 1 card or Gain 1 knowledge",
+          "power45": "Take 1 card or Gain 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "technology"
+        },
+        {
+          "id": "technology-blue-type2",
           "color": "blue",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Discard 1 card -> Gain 2 Gold",
+          "power23": "Discard 1 card -> Gain 2 Gold or 1 knowledge",
+          "power45": "Discard 1 card -> Gain 2 Gold or 1 knowledge. Do this power up to 2 times",
+          "bonus": "Gain 1 knowledge",
           "guild": "technology"
         },
         {
-          "id": "technology-red-1",
+          "id": "technology-red-type2",
           "color": "red",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Gold",
+          "power1": "Discard 1 card -> Gain 2 Gold",
+          "power23": "Discard 1 card -> Gain 2 Gold or 1 knowledge",
+          "power45": "Discard 1 card -> Gain 2 Gold or 1 knowledge. Do this power up to 2 times",
+          "bonus": "Gain 1 knowledge",
           "guild": "technology"
         },
         {
-          "id": "technology-red-2",
-          "color": "red",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "technology"
-        },
-        {
-          "id": "technology-green-1",
+          "id": "technology-green-type2",
           "color": "green",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Gold",
+          "power1": "Discard 1 card -> Gain 2 Gold",
+          "power23": "Discard 1 card -> Gain 2 Gold or 1 knowledge",
+          "power45": "Discard 1 card -> Gain 2 Gold or 1 knowledge. Do this power up to 2 times",
+          "bonus": "Gain 1 knowledge",
           "guild": "technology"
         },
         {
-          "id": "technology-green-2",
-          "color": "green",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "technology"
-        },
-        {
-          "id": "technology-yellow-1",
+          "id": "technology-yellow-type2",
           "color": "yellow",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Gold",
+          "power1": "Discard 1 card -> Gain 2 Gold",
+          "power23": "Discard 1 card -> Gain 2 Gold or 1 knowledge",
+          "power45": "Discard 1 card -> Gain 2 Gold or 1 knowledge. Do this power up to 2 times",
+          "bonus": "Gain 1 knowledge",
           "guild": "technology"
         },
         {
-          "id": "technology-yellow-2",
-          "color": "yellow",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "technology"
-        },
-        {
-          "id": "technology-purple-1",
+          "id": "technology-purple-type2",
           "color": "purple",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 VP",
-          "guild": "technology"
-        },
-        {
-          "id": "technology-purple-2",
-          "color": "purple",
-          "position": 1,
-          "power": "Gain 1 Gold. Pay 1 Gold → Take 1",
-          "bonus": "Gain 1 Gold",
+          "power1": "Discard 1 card -> Gain 2 Gold",
+          "power23": "Discard 1 card -> Gain 2 Gold or 1 knowledge",
+          "power45": "Discard 1 card -> Gain 2 Gold or 1 knowledge. Do this power up to 2 times",
+          "bonus": "Gain 1 knowledge",
           "guild": "technology"
         }
       ]
@@ -259,169 +289,189 @@
       "name": "royal",
       "cards": [
         {
-          "id": "royal-blue-1",
+          "id": "royal-blue-type1",
           "color": "blue",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Gold",
+          "power1": "Exile 1 card -> gain 1 Gold and Draw 1 card",
+          "power23": "Exile 1 card -> gain 1 Gold and 1 knowledge",
+          "power45": "Exile 1 card -> gain 1 Gold and 1 VP",
+          "bonus": "Gain 1 knowledge",
           "guild": "royal"
         },
         {
-          "id": "royal-blue-2",
+          "id": "royal-red-type1",
+          "color": "red",
+          "power1": "Exile 1 card -> gain 1 Gold and Draw 1 card",
+          "power23": "Exile 1 card -> gain 1 Gold and 1 knowledge",
+          "power45": "Exile 1 card -> gain 1 Gold and 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-green-type1",
+          "color": "green",
+          "power1": "Exile 1 card -> gain 1 Gold and Draw 1 card",
+          "power23": "Exile 1 card -> gain 1 Gold and 1 knowledge",
+          "power45": "Exile 1 card -> gain 1 Gold and 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-yellow-type1",
+          "color": "yellow",
+          "power1": "Exile 1 card -> gain 1 Gold and Draw 1 card",
+          "power23": "Exile 1 card -> gain 1 Gold and 1 knowledge",
+          "power45": "Exile 1 card -> gain 1 Gold and 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-purple-type1",
+          "color": "purple",
+          "power1": "Exile 1 card -> gain 1 Gold and Draw 1 card",
+          "power23": "Exile 1 card -> gain 1 Gold and 1 knowledge",
+          "power45": "Exile 1 card -> gain 1 Gold and 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "royal"
+        },
+        {
+          "id": "royal-blue-type2",
           "color": "blue",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Knowledge",
+          "power1": "Gain 1 Gold. Discard 1 card -> Army or Fight",
+          "power23": "Gain 1 knowledge. Discard 1 card -> Army or Fight",
+          "power45": "Gain 1 VP. Discard 1 card -> Army or Fight",
+          "bonus": "Gain 1 knowledge",
           "guild": "royal"
         },
         {
-          "id": "royal-red-1",
+          "id": "royal-red-type2",
           "color": "red",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Gold",
+          "power1": "Gain 1 Gold. Discard 1 card -> Army or Fight",
+          "power23": "Gain 1 knowledge. Discard 1 card -> Army or Fight",
+          "power45": "Gain 1 VP. Discard 1 card -> Army or Fight",
+          "bonus": "Gain 1 knowledge",
           "guild": "royal"
         },
         {
-          "id": "royal-red-2",
-          "color": "red",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "royal"
-        },
-        {
-          "id": "royal-green-1",
+          "id": "royal-green-type2",
           "color": "green",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Gold",
+          "power1": "Gain 1 Gold. Discard 1 card -> Army or Fight",
+          "power23": "Gain 1 knowledge. Discard 1 card -> Army or Fight",
+          "power45": "Gain 1 VP. Discard 1 card -> Army or Fight",
+          "bonus": "Gain 1 knowledge",
           "guild": "royal"
         },
         {
-          "id": "royal-green-2",
-          "color": "green",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "royal"
-        },
-        {
-          "id": "royal-yellow-1",
+          "id": "royal-yellow-type2",
           "color": "yellow",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Gold",
+          "power1": "Gain 1 Gold. Discard 1 card -> Army or Fight",
+          "power23": "Gain 1 knowledge. Discard 1 card -> Army or Fight",
+          "power45": "Gain 1 VP. Discard 1 card -> Army or Fight",
+          "bonus": "Gain 1 knowledge",
           "guild": "royal"
         },
         {
-          "id": "royal-yellow-2",
-          "color": "yellow",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "royal"
-        },
-        {
-          "id": "royal-purple-1",
+          "id": "royal-purple-type2",
           "color": "purple",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 VP",
-          "guild": "royal"
-        },
-        {
-          "id": "royal-purple-2",
-          "color": "purple",
-          "position": 1,
-          "power": "Gain 1 VP. Exile 1 → Gain 1 VP",
-          "bonus": "Gain 1 Gold",
+          "power1": "Gain 1 Gold. Discard 1 card -> Army or Fight",
+          "power23": "Gain 1 knowledge. Discard 1 card -> Army or Fight",
+          "power45": "Gain 1 VP. Discard 1 card -> Army or Fight",
+          "bonus": "Gain 1 knowledge",
           "guild": "royal"
         }
       ]
     },
     {
-      "name": "building",
+      "name": "trade",
       "cards": [
         {
-          "id": "building-blue-1",
+          "id": "trade-blue-type1",
           "color": "blue",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Gold",
-          "guild": "building"
+          "power1": "Gain 1 Gold",
+          "power23": "Gain 1 Gold. Discard 1 card -> gain 2 Gold",
+          "power45": "Gain 1 Gold. Exile 1 card -> gain 2 Gold",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
         },
         {
-          "id": "building-blue-2",
+          "id": "trade-red-type1",
+          "color": "red",
+          "power1": "Gain 1 Gold",
+          "power23": "Gain 1 Gold. Discard 1 card -> gain 2 Gold",
+          "power45": "Gain 1 Gold. Exile 1 card -> gain 2 Gold",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
+        },
+        {
+          "id": "trade-green-type1",
+          "color": "green",
+          "power1": "Gain 1 Gold",
+          "power23": "Gain 1 Gold. Discard 1 card -> gain 2 Gold",
+          "power45": "Gain 1 Gold. Exile 1 card -> gain 2 Gold",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
+        },
+        {
+          "id": "trade-yellow-type1",
+          "color": "yellow",
+          "power1": "Gain 1 Gold",
+          "power23": "Gain 1 Gold. Discard 1 card -> gain 2 Gold",
+          "power45": "Gain 1 Gold. Exile 1 card -> gain 2 Gold",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
+        },
+        {
+          "id": "trade-purple-type1",
+          "color": "purple",
+          "power1": "Gain 1 Gold",
+          "power23": "Gain 1 Gold. Discard 1 card -> gain 2 Gold",
+          "power45": "Gain 1 Gold. Exile 1 card -> gain 2 Gold",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
+        },
+        {
+          "id": "trade-blue-type2",
           "color": "blue",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "building"
+          "power1": "Gain 1 Gold. Discard 1 card -> Take 1 card",
+          "power23": "Gain 1 Gold. Take 1 card",
+          "power45": "Gain 1 Gold. Take 1 card. 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
         },
         {
-          "id": "building-red-1",
+          "id": "trade-red-type2",
           "color": "red",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Gold",
-          "guild": "building"
+          "power1": "Gain 1 Gold. Discard 1 card -> Take 1 card",
+          "power23": "Gain 1 Gold. Take 1 card",
+          "power45": "Gain 1 Gold. Take 1 card. 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
         },
         {
-          "id": "building-red-2",
-          "color": "red",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "building"
-        },
-        {
-          "id": "building-green-1",
+          "id": "trade-green-type2",
           "color": "green",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Gold",
-          "guild": "building"
+          "power1": "Gain 1 Gold. Discard 1 card -> Take 1 card",
+          "power23": "Gain 1 Gold. Take 1 card",
+          "power45": "Gain 1 Gold. Take 1 card. 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
         },
         {
-          "id": "building-green-2",
-          "color": "green",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "building"
-        },
-        {
-          "id": "building-yellow-1",
+          "id": "trade-yellow-type2",
           "color": "yellow",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Gold",
-          "guild": "building"
+          "power1": "Gain 1 Gold. Discard 1 card -> Take 1 card",
+          "power23": "Gain 1 Gold. Take 1 card",
+          "power45": "Gain 1 Gold. Take 1 card. 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
         },
         {
-          "id": "building-yellow-2",
-          "color": "yellow",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Knowledge",
-          "guild": "building"
-        },
-        {
-          "id": "building-purple-1",
+          "id": "trade-purple-type2",
           "color": "purple",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 VP",
-          "guild": "building"
-        },
-        {
-          "id": "building-purple-2",
-          "color": "purple",
-          "position": 1,
-          "power": "Build Outpost. Pay 1 Gold → Build Outpost",
-          "bonus": "Gain 1 Gold",
-          "guild": "building"
+          "power1": "Gain 1 Gold. Discard 1 card -> Take 1 card",
+          "power23": "Gain 1 Gold. Take 1 card",
+          "power45": "Gain 1 Gold. Take 1 card. 1 VP",
+          "bonus": "Gain 1 knowledge",
+          "guild": "trade"
         }
       ]
     }

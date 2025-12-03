@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { GameEngine } from '../core/GameEngine';
 
 // Moved all required types here to avoid circular dependencies
-type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'building';
+type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'trade';
 type Color = 'blue' | 'red' | 'green' | 'yellow' | 'purple';
 type PlayerId = string;
 type GamePhase = 'setup' | 'playing' | 'ended';
