@@ -7,6 +7,7 @@ function App() {
   const [playerNames, setPlayerNames] = useState<string[]>(['Player 1', 'Player 2']);
   const [gameStarted, setGameStarted] = useState(false);
   const [engine] = useState(new GameEngine());
+  const [selectedCard, setSelectedCard] = useState<any>(null);
 
   useEffect(() => {
     // Load saved game on startup
@@ -39,7 +40,7 @@ function App() {
     }
 
     const action = {
-      type: 'expand',
+      type: 'expand' as const,
       playerId: currentPlayer.id,
       cardId
     };
@@ -62,7 +63,7 @@ function App() {
     if (!gameState) return;
 
     const action = {
-      type: 'consolidate',
+      type: 'consolidate' as const,
       playerId: gameState.players[gameState.currentPlayerIndex]?.id
     };
 
@@ -96,6 +97,7 @@ function App() {
       </div>
     );
   }
+
 
   const currentPlayer = gameState?.players[gameState?.currentPlayerIndex];
 
@@ -157,8 +159,12 @@ function App() {
                 <div className="card-color" style={{ backgroundColor: card.color }}>
                   {card.color}
                 </div>
-                <div className="card-power">{card.power}</div>
-                <div className="card-bonus">{card.bonus}</div>
+                <div className="card-powers">
+                  <div>1: {card.power1}</div>
+                  <div>2-3: {card.power23}</div>
+                  <div>4-5: {card.power45}</div>
+                  <div>Bonus: {card.bonus}</div>
+                </div>
               </div>
             ))}
           </div>
@@ -173,13 +179,35 @@ function App() {
 
           <div className="guild-piles">
             <h3>Guild Piles</h3>
-            {currentPlayer && Object.entries(currentPlayer.guildPiles || {}).map(([guild, cards]: [string, any[]]) => (
+            {currentPlayer && Object.entries(currentPlayer.guildPiles || {}).map(([guild, cards]: [string, any]) => (
               <div key={guild} className="guild-pile">
                 <h4>{guild}</h4>
                 <div className="guild-cards">
-                  {cards.map(card => (
-                    <div key={card.id} className="guild-card">
-                      {card.color}
+                  {(cards as any[]).map((card: any, index: number) => (
+                    <div
+                      key={card.id}
+                      className={`guild-card ${guild} ${card.color}`}
+                      style={{
+                        transform: `translateY(${index * -25}%)`,
+                        zIndex: cards.length - index,
+                        position: 'absolute',
+                        fontSize: '6px',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => setSelectedCard(card)}
+                    >
+                      <div className="guild-card-content" style={{ fontSize: '6px' }}>
+                        <div className="guild-card-guild" style={{ fontSize: '6px' }}>{card.guild}</div>
+                        <div className="guild-card-color" style={{ backgroundColor: card.color, fontSize: '5px' }}>
+                          {card.color}
+                        </div>
+                        <div className="guild-card-powers" style={{ fontSize: '5px', lineHeight: '1.0', margin: '0', padding: '0' }}>
+                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>1: {card.power1}</div>
+                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>2-3: {card.power23}</div>
+                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>4-5: {card.power45}</div>
+                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>Bonus: {card.bonus}</div>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -199,7 +227,29 @@ function App() {
         </button>
       </div>
     </div>
-  );
+
+  ); {
+    selectedCard && (
+      <div className="card-popup-overlay" onClick={() => setSelectedCard(null)}>
+        <div className="card-popup" onClick={(e) => e.stopPropagation()}>
+          <button className="card-popup-close" onClick={() => setSelectedCard(null)}>X</button>
+          <div className="card-popup-content">
+            <div className="card-guild">{selectedCard.guild}</div>
+            <div className="card-color" style={{ backgroundColor: selectedCard.color }}>
+              {selectedCard.color}
+            </div>
+            <div className="card-powers">
+              <div>1: {selectedCard.power1}</div>
+              <div>2-3: {selectedCard.power23}</div>
+              <div>4-5: {selectedCard.power45}</div>
+              <div>Bonus: {selectedCard.bonus}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
+
 
 export default App;

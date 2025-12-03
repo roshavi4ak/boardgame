@@ -90,6 +90,10 @@ body {
   background: white;
   padding: 15px 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .game-header h1 {
@@ -102,6 +106,7 @@ body {
   display: flex;
   gap: 20px;
   font-size: 1rem;
+  align-items: center;
 }
 
 .game-board {
@@ -109,6 +114,7 @@ body {
   flex: 1;
   padding: 20px;
   gap: 20px;
+  flex-direction: column;
 }
 
 .map-section, .player-section {
@@ -217,24 +223,24 @@ body {
 
 .hand-cards {
   display: flex;
-  gap: 10px;
-  margin: 15px 0;
+  gap: 15px;
+  margin: 20px 0;
   overflow-x: auto;
-  padding: 10px 0;
+  padding: 15px 0;
+  min-height: 260px;
 }
 
 .card {
-  width: 120px;
-  height: 180px;
+  width: 180px;
+  min-height: 280px;
   background: white;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .card:hover {
@@ -243,28 +249,43 @@ body {
 }
 
 .card-guild {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-weight: bold;
   color: #667eea;
   text-transform: uppercase;
+  margin-bottom: 10px;
 }
 
 .card-color {
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  margin: 5px 0;
+  margin: 10px auto;
+  font-size: 0.9rem;
 }
 
-.card-power, .card-bonus {
-  font-size: 0.7rem;
-  margin: 5px 0;
-  line-height: 1.2;
+.card-powers {
+  font-size: 0.8rem;
+  margin: 8px 0;
+  line-height: 1.4;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.card-powers div {
+  margin: 6px 0;
+  padding: 4px 0;
+  white-space: normal;
+  word-wrap: break-word;
+  min-height: 24px;
+  font-size: 0.8rem;
 }
 
 .player-resources {
@@ -272,6 +293,26 @@ body {
   padding: 10px;
   background: #f7fafc;
   border-radius: 5px;
+}
+
+.game-header .player-resources {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+.game-header .player-resources h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.game-header .player-resources p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 .guild-piles {
@@ -291,20 +332,201 @@ body {
 
 .guild-cards {
   display: flex;
+  flex-direction: column;
   gap: 5px;
   margin-top: 5px;
+  position: relative;
+  height: 400px;
+  justify-content: flex-end;
 }
 
 .guild-card {
-  width: 25px;
-  height: 25px;
-  border-radius: 3px;
+  width: 90px;
+  height: 140px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 4px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  transform-origin: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  bottom: 0;
+  left: 0;
+  font-size: 8px;
+  overflow: hidden;
+}
+
+.guild-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  font-size: 8px;
+}
+
+.guild-card-guild {
+  font-size: 8px;
+  font-weight: bold;
+  color: #667eea;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.guild-card-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
   color: white;
   font-weight: bold;
+  margin: 3px auto;
+  font-size: 6px;
+}
+
+.guild-card-powers {
+  font-size: 6px;
+  margin: 2px 0;
+  line-height: 1.1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.guild-card-powers div {
+  margin: 1px 0;
+  padding: 1px 0;
+  white-space: normal;
+  word-wrap: break-word;
+  min-height: 8px;
+  font-size: 6px;
+}
+
+/* Card Popup Dialog */
+.card-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.card-popup {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.card-popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.card-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-popup .card-guild {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #667eea;
+  text-transform: uppercase;
+}
+
+.card-popup .card-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+
+.card-popup .card-powers {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.card-popup .card-powers div {
+  margin: 8px 0;
+  padding: 6px 0;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.guild-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.guild-card-guild {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #667eea;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.guild-card-color {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  margin: 10px auto;
+  font-size: 0.9rem;
+}
+
+.guild-card-powers {
+  font-size: 0.8rem;
+  margin: 8px 0;
+  line-height: 1.4;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+}
+
+.guild-card-powers div {
+  margin: 6px 0;
+  padding: 4px 0;
+  white-space: normal;
+  word-wrap: break-word;
+  min-height: 24px;
+  font-size: 0.8rem;
 }
 
 .game-actions {
@@ -341,7 +563,7 @@ body {
 .culture { background-color: #48bb78; }
 .technology { background-color: #38b2ac; }
 .royal { background-color: #805ad5; }
-.building { background-color: #ed8936; }
+.trade { background-color: #ed8936; }
 
 /* Color classes for card colors */
 .blue { background-color: #4299e1; }
@@ -349,3 +571,127 @@ body {
 .green { background-color: #48bb78; }
 .yellow { background-color: #ed8936; }
 .purple { background-color: #805ad5; }
+
+/* Responsive Design for Mobile Devices */
+@media (max-width: 768px) {
+  .game-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .game-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .game-info {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .game-header .player-resources {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .game-header .player-resources h3 {
+    display: none;
+  }
+
+  .game-header .player-resources p {
+    font-size: 0.8rem;
+    margin-right: 10px;
+  }
+
+  .card {
+    width: 120px;
+    min-height: 200px;
+    font-size: 0.7rem;
+  }
+
+  .card-guild {
+    font-size: 0.7rem;
+  }
+
+  .card-color {
+    width: 25px;
+    height: 25px;
+    font-size: 0.7rem;
+  }
+
+  .card-powers {
+    font-size: 0.6rem;
+  }
+
+  .card-powers div {
+    font-size: 0.6rem;
+    min-height: 18px;
+  }
+
+  .hand-cards {
+    min-height: 180px;
+    gap: 8px;
+    padding: 10px 0;
+  }
+
+  .map-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+
+  .map-spot {
+    font-size: 0.6rem;
+  }
+
+  .spot-id, .army-count, .player-marker {
+    font-size: 0.6rem;
+  }
+
+  .game-board {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .guild-piles {
+    flex-direction: column;
+  }
+
+  .guild-pile {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .guild-cards {
+    height: 200px;
+  }
+
+  .guild-card {
+    width: 60px;
+    height: 100px;
+    font-size: 6px;
+  }
+
+  .guild-card-content {
+    font-size: 6px;
+  }
+
+  .guild-card-guild {
+    font-size: 6px;
+  }
+
+  .guild-card-color {
+    width: 10px;
+    height: 10px;
+    font-size: 5px;
+  }
+
+  .guild-card-powers {
+    font-size: 5px;
+  }
+
+  .guild-card-powers div {
+    font-size: 5px;
+  }
+}

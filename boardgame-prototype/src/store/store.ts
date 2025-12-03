@@ -54,18 +54,6 @@ interface GameState {
   updatedAt: string;
 }
 
-interface GameAction {
-  type: 'expand' | 'consolidate';
-  playerId: string;
-  cardId?: string;
-  targetSpotId?: number;
-  payload?: any;
-}
-
-interface GameStore {
-  game: GameState;
-  engine: GameEngine;
-}
 
 const initialState: GameState = {
   id: '',
@@ -84,10 +72,10 @@ const gameSlice = {
   name: 'game',
   initialState,
   reducers: {
-    initializeGame: (state: GameState, action: { payload: string[] }) => {
+    initializeGame: (_state: GameState, action: { payload: string[] }) => {
       return gameEngine.initializeGame(action.payload);
     },
-    processAction: (state: GameState, action: { payload: any }) => {
+    processAction: (_state: GameState, action: { payload: any }) => {
       return gameEngine.processAction(action.payload);
     },
     loadGame: (state: GameState) => {
@@ -99,9 +87,9 @@ const gameSlice = {
 
 export const store = configureStore({
   reducer: {
-    game: (state = initialState, action) => {
-      if (gameSlice.reducers[action.type]) {
-        return gameSlice.reducers[action.type](state, action);
+    game: (state = initialState, action: any) => {
+      if (gameSlice.reducers[action.type as keyof typeof gameSlice.reducers]) {
+        return gameSlice.reducers[action.type as keyof typeof gameSlice.reducers](state, action);
       }
       return state;
     }

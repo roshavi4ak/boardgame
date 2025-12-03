@@ -52,7 +52,7 @@ interface GameState {
   updatedAt: string;
 }
 
-interface GameAction {
+export interface GameAction {
   type: 'expand' | 'consolidate';
   playerId: string;
   cardId?: string;
@@ -160,7 +160,6 @@ export class GameEngine {
     }
 
     // Check adjacency to player's existing armies or outposts
-    const currentPlayer = this.getCurrentPlayer();
     const adjacentSpots = this.getAdjacentSpots(spotId);
 
     return adjacentSpots.some(adjSpotId => {
@@ -328,7 +327,7 @@ export class GameEngine {
     return state;
   }
 
-  private handleConsolidateAction(state: GameState, action: GameAction): GameState {
+  private handleConsolidateAction(state: GameState, _action: GameAction): GameState {
     const currentPlayer = state.players[state.currentPlayerIndex];
 
     // Discard all cards from hand
