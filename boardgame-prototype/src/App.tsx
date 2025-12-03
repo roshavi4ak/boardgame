@@ -163,6 +163,36 @@ function App() {
       return;
     }
 
+    // Check if this conditional power requires exile
+    if (normalizedLeft.includes('exile') && normalizedLeft.includes('card')) {
+      // Execute the conditional power to set exile requirement
+      engine.executeConditionalPower(currentPlayer, power.left, power.right);
+
+      // Don't remove the conditional power from the queue yet
+      // Keep it in the queue so we can process the right part after exile is complete
+      setGameState(currentState);
+      setConditionalPowerPrompt(null);
+
+      // Don't execute the right part yet - wait for exile to complete
+      // The exile requirement is now set in player.resources.exileCards
+      return;
+    }
+
+    // Check if this conditional power requires bury
+    if (normalizedLeft.includes('bury') && normalizedLeft.includes('card')) {
+      // Execute the conditional power to set bury requirement
+      engine.executeConditionalPower(currentPlayer, power.left, power.right);
+
+      // Don't remove the conditional power from the queue yet
+      // Keep it in the queue so we can process the right part after bury is complete
+      setGameState(currentState);
+      setConditionalPowerPrompt(null);
+
+      // Don't execute the right part yet - wait for bury to complete
+      // The bury requirement is now set in player.resources.buryCards
+      return;
+    }
+
     // Check if this conditional power has nested choices (right part contains "or")
     if (power.nestedChoices && power.nestedChoices.length > 0) {
       console.log('DEBUG: Conditional power has nested choices:', power.nestedChoices);
@@ -358,6 +388,175 @@ function App() {
     }
   };
 
+  const handleExileAction = (cardId: string) => {
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.resources.exileCards && currentPlayer.resources.exileCards > 0) {
+      console.log('DEBUG: Starting exile action');
+      console.log('DEBUG: Current exile requirement:', currentPlayer.resources.exileCards);
+      console.log('DEBUG: Pending conditional powers:', gameState.pendingConditionalPowers);
+
+      const newState = engine.exileCard(currentPlayer.id, cardId);
+      console.log('DEBUG: After exile - new state:', newState);
+
+      setGameState(newState);
+
+      // Check if exile requirement is now fulfilled and execute any pending conditional benefits
+      const updatedPlayer = newState.players[newState.currentPlayerIndex];
+      console.log('DEBUG: Updated player exileCards:', updatedPlayer.resources.exileCards);
+
+      if (updatedPlayer.resources.exileCards === 0) {
+        console.log('DEBUG: Exile requirement fulfilled, checking for conditional benefits');
+
+        // Use the existing GameEngine's conditional power execution system
+        if (gameState.pendingConditionalPowers && gameState.pendingConditionalPowers.length > 0) {
+          const conditionalPower = gameState.pendingConditionalPowers[0];
+          console.log('DEBUG: Found conditional power:', conditionalPower.fullText);
+
+          // Check if this is a exile->benefit conditional power (case-insensitive)
+          const normalizedPowerText = conditionalPower.fullText.toLowerCase();
+          if (normalizedPowerText.includes('exile') && (conditionalPower.fullText.includes('->') || conditionalPower.fullText.includes('→'))) {
+            console.log('DEBUG: This is a exile->benefit conditional power');
+
+            // Check if the right part contains "or" choices that need player selection (case-insensitive)
+            if (conditionalPower.right.toLowerCase().includes(' or ')) {
+              console.log('DEBUG: Right part contains choices, showing choice prompt');
+
+              // Show choice prompt for the player to select which benefit they want
+              setChoicePowerPrompt({
+                power: `Choose your benefit: ${conditionalPower.right}`,
+                choices: conditionalPower.right.split(' or ').map((choice: string) => choice.trim()),
+                onChoice: (choice: string) => {
+                  console.log('DEBUG: Player chose benefit:', choice);
+
+                  // Execute only the chosen benefit using the new GameEngine method
+                  engine.executeConditionalPowerBenefitOnly(updatedPlayer, choice);
+
+                  // Remove the conditional power from the queue
+                  const finalState = {...newState};
+                  finalState.pendingConditionalPowers = (finalState.pendingConditionalPowers || []).filter(
+                    (p: any) => p.fullText !== conditionalPower.fullText
+                  );
+                  console.log('DEBUG: Final state after removing conditional power:', finalState);
+                  setGameState(finalState);
+                  setChoicePowerPrompt(null);
+                }
+              });
+            } else {
+              // Execute only the right part (benefit) using the new GameEngine method
+              engine.executeConditionalPowerBenefitOnly(updatedPlayer, conditionalPower.right);
+
+              // Remove the conditional power from the queue
+              const finalState = {...newState};
+              finalState.pendingConditionalPowers = (finalState.pendingConditionalPowers || []).filter(
+                (p: any) => p.fullText !== conditionalPower.fullText
+              );
+              console.log('DEBUG: Final state after removing conditional power:', finalState);
+              setGameState(finalState);
+            }
+          } else {
+            console.log('DEBUG: Conditional power does not match exile->benefit pattern');
+          }
+        } else {
+          console.log('DEBUG: No pending conditional powers found');
+        }
+      } else {
+        console.log('DEBUG: Exile requirement not yet fulfilled, remaining:', updatedPlayer.resources.exileCards);
+      }
+    }
+  };
+
+  const handleBuryAction = (cardId: string) => {
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.resources.buryCards && currentPlayer.resources.buryCards > 0) {
+      console.log('DEBUG: Starting bury action');
+      console.log('DEBUG: Current bury requirement:', currentPlayer.resources.buryCards);
+      console.log('DEBUG: Pending conditional powers:', gameState.pendingConditionalPowers);
+
+      const newState = engine.buryCard(currentPlayer.id, cardId);
+      console.log('DEBUG: After bury - new state:', newState);
+
+      setGameState(newState);
+
+      // Check if bury requirement is now fulfilled and execute any pending conditional benefits
+      const updatedPlayer = newState.players[newState.currentPlayerIndex];
+      console.log('DEBUG: Updated player buryCards:', updatedPlayer.resources.buryCards);
+
+      if (updatedPlayer.resources.buryCards === 0) {
+        console.log('DEBUG: Bury requirement fulfilled, checking for conditional benefits');
+
+        // Use the existing GameEngine's conditional power execution system
+        if (gameState.pendingConditionalPowers && gameState.pendingConditionalPowers.length > 0) {
+          const conditionalPower = gameState.pendingConditionalPowers[0];
+          console.log('DEBUG: Found conditional power:', conditionalPower.fullText);
+
+          // Check if this is a bury->benefit conditional power (case-insensitive)
+          const normalizedPowerText = conditionalPower.fullText.toLowerCase();
+          if (normalizedPowerText.includes('bury') && (conditionalPower.fullText.includes('->') || conditionalPower.fullText.includes('→'))) {
+            console.log('DEBUG: This is a bury->benefit conditional power');
+
+            // Check if the right part contains "or" choices that need player selection (case-insensitive)
+            if (conditionalPower.right.toLowerCase().includes(' or ')) {
+              console.log('DEBUG: Right part contains choices, showing choice prompt');
+
+              // Show choice prompt for the player to select which benefit they want
+              setChoicePowerPrompt({
+                power: `Choose your benefit: ${conditionalPower.right}`,
+                choices: conditionalPower.right.split(' or ').map((choice: string) => choice.trim()),
+                onChoice: (choice: string) => {
+                  console.log('DEBUG: Player chose benefit:', choice);
+
+                  // Execute only the chosen benefit using the new GameEngine method
+                  engine.executeConditionalPowerBenefitOnly(updatedPlayer, choice);
+
+                  // Remove the conditional power from the queue
+                  const finalState = {...newState};
+                  finalState.pendingConditionalPowers = (finalState.pendingConditionalPowers || []).filter(
+                    (p: any) => p.fullText !== conditionalPower.fullText
+                  );
+                  console.log('DEBUG: Final state after removing conditional power:', finalState);
+                  setGameState(finalState);
+                  setChoicePowerPrompt(null);
+                }
+              });
+            } else {
+              // Execute only the right part (benefit) using the new GameEngine method
+              engine.executeConditionalPowerBenefitOnly(updatedPlayer, conditionalPower.right);
+
+              // Remove the conditional power from the queue
+              const finalState = {...newState};
+              finalState.pendingConditionalPowers = (finalState.pendingConditionalPowers || []).filter(
+                (p: any) => p.fullText !== conditionalPower.fullText
+              );
+              console.log('DEBUG: Final state after removing conditional power:', finalState);
+              setGameState(finalState);
+            }
+          } else {
+            console.log('DEBUG: Conditional power does not match bury->benefit pattern');
+          }
+        } else {
+          console.log('DEBUG: No pending conditional powers found');
+        }
+      } else {
+        console.log('DEBUG: Bury requirement not yet fulfilled, remaining:', updatedPlayer.resources.buryCards);
+      }
+    }
+  };
+
+  const handleReviveAction = () => {
+    if (!gameState) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.resources.revive && currentPlayer.resources.revive > 0) {
+      console.log('DEBUG: Starting revive action');
+      const newState = engine.reviveCard(currentPlayer.id);
+      setGameState(newState);
+    }
+  };
+
   if (!gameStarted) {
     return (
       <div className="setup-screen">
@@ -467,33 +666,52 @@ function App() {
         <div className="player-section">
           <h2>Your Hand</h2>
           <div className="hand-cards">
-            {currentPlayer?.hand?.map((card: any) => (
-              <div
-                key={card.id}
-                className="card"
-                onClick={() => {
-                  if (currentPlayer.resources.discardCards && currentPlayer.resources.discardCards > 0) {
-                    handleDiscardAction(card.id);
-                  } else {
-                    handleExpandAction(card.id);
-                  }
-                }}
-              >
-                <div className="card-guild">{card.guild}</div>
-                <div className="card-color" style={{ backgroundColor: card.color }}>
-                  {card.color}
+            {currentPlayer?.hand?.map((card: any) => {
+              // Check if this card is the one that was just played (cannot exile it)
+              const isLastPlayedCard = gameState?.lastPlayedCardId === card.id;
+              const canExileThisCard = currentPlayer?.resources?.exileCards && currentPlayer.resources.exileCards > 0 && !isLastPlayedCard;
+
+              return (
+                <div
+                  key={card.id}
+                  className={`card ${isLastPlayedCard ? 'last-played-card' : ''}`}
+                  onClick={() => {
+                    if (currentPlayer.resources.discardCards && currentPlayer.resources.discardCards > 0) {
+                      handleDiscardAction(card.id);
+                    } else if (canExileThisCard) {
+                      handleExileAction(card.id);
+                    } else if (currentPlayer.resources.buryCards && currentPlayer.resources.buryCards > 0) {
+                      handleBuryAction(card.id);
+                    } else {
+                      handleExpandAction(card.id);
+                    }
+                  }}
+                >
+                  <div className="card-guild">{card.guild}</div>
+                  <div className="card-color" style={{ backgroundColor: card.color }}>
+                    {card.color}
+                  </div>
+                  <div className="card-powers">
+                    <div>1: {card.power1}</div>
+                    <div>2-3: {card.power23}</div>
+                    <div>4-5: {card.power45}</div>
+                    <div>Bonus: {card.bonus}</div>
+                  </div>
+                  {currentPlayer?.resources?.discardCards && currentPlayer.resources.discardCards > 0 && (
+                    <div className="discard-overlay">Discard</div>
+                  )}
+                  {canExileThisCard && (
+                    <div className="exile-overlay">Exile</div>
+                  )}
+                  {currentPlayer?.resources?.buryCards && currentPlayer.resources.buryCards > 0 && (
+                    <div className="bury-overlay">Bury</div>
+                  )}
+                  {isLastPlayedCard && (
+                    <div className="cannot-exile-overlay">Cannot Exile</div>
+                  )}
                 </div>
-                <div className="card-powers">
-                  <div>1: {card.power1}</div>
-                  <div>2-3: {card.power23}</div>
-                  <div>4-5: {card.power45}</div>
-                  <div>Bonus: {card.bonus}</div>
-                </div>
-                {currentPlayer?.resources?.discardCards && currentPlayer.resources.discardCards > 0 && (
-                  <div className="discard-overlay">Discard</div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {choicePowerPrompt && (
@@ -550,6 +768,9 @@ function App() {
             <p>Fight: {currentPlayer?.resources?.fight ?? 0}</p>
             <p>Outpost: {currentPlayer?.resources?.outpost ?? 0}</p>
             <p>Revive: {currentPlayer?.resources?.revive ?? 0}</p>
+            {currentPlayer?.resources?.revive && currentPlayer.resources.revive > 0 && (
+              <button onClick={handleReviveAction} className="revive-button">Revive Card</button>
+            )}
           </div>
 
           <div className="guild-piles">
@@ -558,33 +779,57 @@ function App() {
               <div key={guild} className="guild-pile">
                 <h4>{guild}</h4>
                 <div className="guild-cards">
-                  {(cards as any[]).map((card: any, index: number) => (
-                    <div
-                      key={card.id}
-                      className={`guild-card ${guild} ${card.color}`}
-                      style={{
-                        transform: `translateY(${index * -25}%)`,
-                        zIndex: cards.length - index,
-                        position: 'absolute',
-                        fontSize: '6px',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => setSelectedCard(card)}
-                    >
-                      <div className="guild-card-content" style={{ fontSize: '6px' }}>
-                        <div className="guild-card-guild" style={{ fontSize: '6px' }}>{card.guild}</div>
-                        <div className="guild-card-color" style={{ backgroundColor: card.color, fontSize: '5px' }}>
-                          {card.color}
+                  {(cards as any[]).map((card: any, index: number) => {
+                    // Check if this is the top card (last in array) and player has exile requirement
+                    const isTopCard = index === cards.length - 1;
+                    const canExileFromGuild = currentPlayer?.resources?.exileCards && currentPlayer.resources.exileCards > 0 && isTopCard;
+
+                    // Check if this top card is the one that was just played (cannot exile it)
+                    const isLastPlayedCard = gameState?.lastPlayedCardId === card.id;
+                    const canExileThisGuildCard = canExileFromGuild && !isLastPlayedCard;
+
+                    return (
+                      <div
+                        key={card.id}
+                        className={`guild-card ${guild} ${card.color} ${canExileThisGuildCard ? 'exile-available' : ''} ${isLastPlayedCard ? 'last-played-guild-card' : ''}`}
+                        style={{
+                          transform: `translateY(${index * -25}%)`,
+                          zIndex: cards.length - index,
+                          position: 'absolute',
+                          fontSize: '6px',
+                          cursor: isLastPlayedCard ? 'not-allowed' : 'pointer'
+                        }}
+                        onClick={() => {
+                          if (canExileThisGuildCard) {
+                            // Exile the top card from this guild pile
+                            handleExileAction(`${guild}-top`);
+                          } else if (!isLastPlayedCard) {
+                            setSelectedCard(card);
+                          }
+                          // If it's the last played card, do nothing
+                        }}
+                      >
+                        <div className="guild-card-content" style={{ fontSize: '6px' }}>
+                          <div className="guild-card-guild" style={{ fontSize: '6px' }}>{card.guild}</div>
+                          <div className="guild-card-color" style={{ backgroundColor: card.color, fontSize: '5px' }}>
+                            {card.color}
+                          </div>
+                          <div className="guild-card-powers" style={{ fontSize: '5px', lineHeight: '1.0', margin: '0', padding: '0' }}>
+                            <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>1: {card.power1}</div>
+                            <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>2-3: {card.power23}</div>
+                            <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>4-5: {card.power45}</div>
+                            <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>Bonus: {card.bonus}</div>
+                          </div>
                         </div>
-                        <div className="guild-card-powers" style={{ fontSize: '5px', lineHeight: '1.0', margin: '0', padding: '0' }}>
-                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>1: {card.power1}</div>
-                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>2-3: {card.power23}</div>
-                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>4-5: {card.power45}</div>
-                          <div style={{ fontSize: '5px', margin: '0', padding: '0', lineHeight: '1.0' }}>Bonus: {card.bonus}</div>
-                        </div>
+                        {canExileThisGuildCard && (
+                          <div className="guild-exile-overlay">Exile Top</div>
+                        )}
+                        {isLastPlayedCard && isTopCard && currentPlayer?.resources?.exileCards && currentPlayer.resources.exileCards > 0 && (
+                          <div className="guild-cannot-exile-overlay">Cannot Exile</div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             ))}

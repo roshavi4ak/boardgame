@@ -61,6 +61,7 @@ interface GameState {
   updatedAt: string;
   pendingConditionalPowers?: { left: string, right: string, fullText: string }[];
   pendingChoicePowers?: { choices: string[], fullText: string }[];
+  lastPlayedCardId?: string; // Track the card that was just played to prevent exiling it
 }
 
 export interface GameAction {
@@ -183,6 +184,18 @@ export class GameEngine {
       return false;
     }
 
+    // Check if player has exile requirement that prevents playing other cards
+    if (player.resources.exileCards && player.resources.exileCards > 0) {
+      console.log('Cannot play cards - must exile first');
+      return false;
+    }
+
+    // Check if player has bury requirement that prevents playing other cards
+    if (player.resources.buryCards && player.resources.buryCards > 0) {
+      console.log('Cannot play cards - must bury first');
+      return false;
+    }
+
     return true; // Can play first card in guild or different color
   }
 
@@ -300,6 +313,96 @@ export class GameEngine {
         const [discardedCard] = player.hand.splice(handCardIndex, 1);
         player.discard.push(discardedCard);
         player.resources.discardCards -= 1;
+
+        this.state = newState;
+        this.saveGame();
+      }
+    }
+
+    return this.state;
+  }
+
+  public exileCard(playerId: string, cardId: string): GameState {
+    const newState = { ...this.state, updatedAt: new Date().toISOString() };
+    const player = newState.players.find(p => p.id === playerId);
+
+    if (player && player.resources.exileCards && player.resources.exileCards > 0) {
+      // Check if this card is the one that was just played (cannot exile the card that gave exile power)
+      if (newState.lastPlayedCardId === cardId) {
+        console.log('Cannot exile the card that was just played');
+        return newState;
+      }
+
+      // First try to find the card in player's hand
+      const handCardIndex = player.hand.findIndex(c => c.id === cardId);
+      if (handCardIndex !== -1) {
+        const [exiledCard] = player.hand.splice(handCardIndex, 1);
+        player.exile.push(exiledCard);
+        player.resources.exileCards -= 1;
+
+        this.state = newState;
+        this.saveGame();
+        return this.state;
+      }
+
+      // If not found in hand, check if it's a guild pile card (format: guild-top)
+      if (cardId.endsWith('-top')) {
+        const guild = cardId.replace('-top', '');
+        const guildPile = player.guildPiles[guild as Guild];
+        if (guildPile && guildPile.length > 0) {
+          // Check if the top card of this guild pile is the one that was just played
+          const topCard = guildPile[guildPile.length - 1];
+          if (topCard.id === newState.lastPlayedCardId) {
+            console.log('Cannot exile the card that was just played (top of guild pile)');
+            return newState;
+          }
+
+          // Take the top card from the guild pile (last card in array)
+          const exiledCard = guildPile.pop()!;
+          player.exile.push(exiledCard);
+          player.resources.exileCards -= 1;
+
+          this.state = newState;
+          this.saveGame();
+        }
+      }
+    }
+
+    return this.state;
+  }
+
+  public buryCard(playerId: string, cardId: string): GameState {
+    const newState = { ...this.state, updatedAt: new Date().toISOString() };
+    const player = newState.players.find(p => p.id === playerId);
+
+    if (player && player.resources.buryCards && player.resources.buryCards > 0) {
+      // Find the card in player's hand
+      const handCardIndex = player.hand.findIndex(c => c.id === cardId);
+      if (handCardIndex !== -1) {
+        const [buriedCard] = player.hand.splice(handCardIndex, 1);
+        // Put the card at the bottom of the player's deck (last to draw)
+        player.deck.unshift(buriedCard);
+        player.resources.buryCards -= 1;
+
+        this.state = newState;
+        this.saveGame();
+      }
+    }
+
+    return this.state;
+  }
+
+  public reviveCard(playerId: string): GameState {
+    const newState = { ...this.state, updatedAt: new Date().toISOString() };
+    const player = newState.players.find(p => p.id === playerId);
+
+    if (player && player.resources.revive && player.resources.revive > 0) {
+      // Check if player has any cards in discard pile
+      if (player.discard.length > 0) {
+        // Take the last discarded card (most recently discarded)
+        const revivedCard = player.discard.pop()!;
+        player.hand.push(revivedCard);
+        player.resources.revive -= 1;
 
         this.state = newState;
         this.saveGame();
@@ -436,6 +539,9 @@ export class GameEngine {
     // Add to appropriate guild pile
     const guildPile = currentPlayer.guildPiles[card.guild];
     guildPile.push(card);
+
+    // Track the last played card to prevent exiling it
+    state.lastPlayedCardId = card.id;
 
     // Process card effects with power scaling
     const { conditionalPowers, choicePowers } = this.processCardEffects(currentPlayer, card, guildPile);
@@ -709,6 +815,28 @@ export class GameEngine {
         player.resources.discardCards = 1; // Default to 1 if no number specified
       }
       return; // Don't execute the right part yet - wait for discard to complete
+    } else if (normalizedLeft.includes('exile') && normalizedLeft.includes('card')) {
+      // For exile requirements, set the exile resource instead of executing immediately
+      // This allows the player to choose which card to exile
+      const exileMatch = normalizedLeft.match(/exile (\d+) card/i);
+      if (exileMatch) {
+        const cardsToExile = parseInt(exileMatch[1]);
+        player.resources.exileCards = cardsToExile;
+      } else {
+        player.resources.exileCards = 1; // Default to 1 if no number specified
+      }
+      return; // Don't execute the right part yet - wait for exile to complete
+    } else if (normalizedLeft.includes('bury') && normalizedLeft.includes('card')) {
+      // For bury requirements, set the bury resource instead of executing immediately
+      // This allows the player to choose which card to bury
+      const buryMatch = normalizedLeft.match(/bury (\d+) card/i);
+      if (buryMatch) {
+        const cardsToBury = parseInt(buryMatch[1]);
+        player.resources.buryCards = cardsToBury;
+      } else {
+        player.resources.buryCards = 1; // Default to 1 if no number specified
+      }
+      return; // Don't execute the right part yet - wait for bury to complete
     }
 
     // Execute right part (benefit) - handle "and" for multiple effects

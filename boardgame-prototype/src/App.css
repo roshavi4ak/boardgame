@@ -846,6 +846,150 @@ body {
   background: rgba(229, 62, 62, 0.9);
 }
 
+/* Exile Overlay Style */
+.exile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(132, 167, 69, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.exile-overlay:hover {
+  background: rgba(132, 167, 69, 0.9);
+}
+
+/* Bury Overlay Style */
+.bury-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(237, 137, 54, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.bury-overlay:hover {
+  background: rgba(237, 137, 54, 0.9);
+}
+
+/* Guild Exile Overlay Style */
+.guild-exile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(132, 167, 69, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 10;
+  text-align: center;
+}
+
+.guild-exile-overlay:hover {
+  background: rgba(132, 167, 69, 0.9);
+}
+
+/* Guild card with exile available */
+.guild-card.exile-available {
+  box-shadow: 0 0 8px rgba(132, 167, 69, 0.7);
+  border: 2px solid rgba(132, 167, 69, 0.5);
+}
+
+/* Cannot Exile Overlay Style */
+.cannot-exile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(220, 38, 38, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: not-allowed;
+  z-index: 10;
+}
+
+/* Last played card styling */
+.last-played-card {
+  opacity: 0.7;
+  border: 2px dashed #dc2626;
+}
+
+/* Guild cannot exile overlay */
+.guild-cannot-exile-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(220, 38, 38, 0.8);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 6px;
+  border-radius: 4px;
+  cursor: not-allowed;
+  z-index: 10;
+  text-align: center;
+}
+
+/* Last played guild card styling */
+.last-played-guild-card {
+  opacity: 0.7;
+  border: 1px dashed #dc2626;
+}
+
+/* Revive Button Style */
+.revive-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-left: 10px;
+  transition: transform 0.2s;
+}
+
+.revive-button:hover {
+  transform: translateY(-2px);
+}
+
 /* Fix for Draw resource display issue */
 .draw-resource {
   display: flex;
