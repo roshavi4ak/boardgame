@@ -8,6 +8,17 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [engine] = useState(new GameEngine());
   const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [conditionalPowerPrompt, setConditionalPowerPrompt] = useState<{
+    power: string;
+    onYes: () => void;
+    onNo: () => void;
+  } | null>(null);
+
+  const [choicePowerPrompt, setChoicePowerPrompt] = useState<{
+    power: string;
+    choices: string[];
+    onChoice: (choice: string) => void;
+  } | null>(null);
 
   useEffect(() => {
     // Load saved game on startup
@@ -47,6 +58,99 @@ function App() {
 
     const newState = engine.processAction(action);
     setGameState(newState);
+
+    // Clear any existing prompts when playing a new card
+    setConditionalPowerPrompt(null);
+    setChoicePowerPrompt(null);
+
+    // Check if there are choice powers to handle first (priority over conditional)
+    if (newState.pendingChoicePowers && newState.pendingChoicePowers.length > 0) {
+      const firstChoicePower = newState.pendingChoicePowers[0];
+      setChoicePowerPrompt({
+        power: firstChoicePower.fullText,
+        choices: firstChoicePower.choices,
+        onChoice: (choice: string) => handleChoicePowerResponse(choice, firstChoicePower, newState)
+      });
+    }
+    // Check if there are conditional powers to handle
+    else if (newState.pendingConditionalPowers && newState.pendingConditionalPowers.length > 0) {
+      const firstConditionalPower = newState.pendingConditionalPowers[0];
+      setConditionalPowerPrompt({
+        power: firstConditionalPower.fullText,
+        onYes: () => handleConditionalPowerResponse(true, firstConditionalPower, newState),
+        onNo: () => handleConditionalPowerResponse(false, firstConditionalPower, newState)
+      });
+    }
+  };
+
+  const handleChoicePowerResponse = (choice: string, power: any, currentState: any) => {
+    // Execute the chosen power
+    const currentPlayer = currentState.players[currentState.currentPlayerIndex];
+    engine.executeChoicePower(currentPlayer, choice);
+
+    // Remove the choice power from the queue
+    const updatedState = {...currentState};
+    updatedState.pendingChoicePowers = updatedState.pendingChoicePowers.filter(
+      (p: any) => p.fullText !== power.fullText
+    );
+
+    setGameState(updatedState);
+    setChoicePowerPrompt(null);
+
+    // Check if there are more choice powers to handle
+    if (updatedState.pendingChoicePowers && updatedState.pendingChoicePowers.length > 0) {
+      const nextChoicePower = updatedState.pendingChoicePowers[0];
+      setChoicePowerPrompt({
+        power: nextChoicePower.fullText,
+        choices: nextChoicePower.choices,
+        onChoice: (nextChoice: string) => handleChoicePowerResponse(nextChoice, nextChoicePower, updatedState)
+      });
+    }
+    // Check if there are conditional powers to handle after choices
+    else if (updatedState.pendingConditionalPowers && updatedState.pendingConditionalPowers.length > 0) {
+      const nextConditionalPower = updatedState.pendingConditionalPowers[0];
+      setConditionalPowerPrompt({
+        power: nextConditionalPower.fullText,
+        onYes: () => handleConditionalPowerResponse(true, nextConditionalPower, updatedState),
+        onNo: () => handleConditionalPowerResponse(false, nextConditionalPower, updatedState)
+      });
+    }
+  };
+
+  const handleConditionalPowerResponse = (accept: boolean, power: any, currentState: any) => {
+    if (!accept) {
+      // Remove the conditional power from the queue
+      const updatedState = {...currentState};
+      updatedState.pendingConditionalPowers = updatedState.pendingConditionalPowers.filter(
+        (p: any) => p.fullText !== power.fullText
+      );
+      setGameState(updatedState);
+      setConditionalPowerPrompt(null);
+      return;
+    }
+
+    // Execute the conditional power
+    const currentPlayer = currentState.players[currentState.currentPlayerIndex];
+    engine.executeConditionalPower(currentPlayer, power.left, power.right);
+
+    // Remove the conditional power from the queue
+    const updatedState = {...currentState};
+    updatedState.pendingConditionalPowers = updatedState.pendingConditionalPowers.filter(
+      (p: any) => p.fullText !== power.fullText
+    );
+
+    setGameState(updatedState);
+    setConditionalPowerPrompt(null);
+
+    // Check if there are more conditional powers to handle
+    if (updatedState.pendingConditionalPowers && updatedState.pendingConditionalPowers.length > 0) {
+      const nextConditionalPower = updatedState.pendingConditionalPowers[0];
+      setConditionalPowerPrompt({
+        power: nextConditionalPower.fullText,
+        onYes: () => handleConditionalPowerResponse(true, nextConditionalPower, updatedState),
+        onNo: () => handleConditionalPowerResponse(false, nextConditionalPower, updatedState)
+      });
+    }
   };
 
   const handleArmyPlacement = (spotId: number) => {
@@ -64,6 +168,18 @@ function App() {
 
     const action = {
       type: 'consolidate' as const,
+      playerId: gameState.players[gameState.currentPlayerIndex]?.id
+    };
+
+    const newState = engine.processAction(action);
+    setGameState(newState);
+  };
+
+  const handleEndTurnAction = () => {
+    if (!gameState) return;
+
+    const action = {
+      type: 'endTurn' as const,
       playerId: gameState.players[gameState.currentPlayerIndex]?.id
     };
 
@@ -169,12 +285,46 @@ function App() {
             ))}
           </div>
 
+          {choicePowerPrompt && (
+            <div className="choice-power-prompt">
+              <p>What is your choice: "{choicePowerPrompt.power}"?</p>
+              <div className="choice-power-buttons">
+                {choicePowerPrompt.choices.map((choice, index) => (
+                  <button
+                    key={index}
+                    onClick={() => choicePowerPrompt.onChoice(choice)}
+                    className="action-button"
+                  >
+                    {choice}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {conditionalPowerPrompt && (
+            <div className="conditional-power-prompt">
+              <p>Do you want to use the conditional power: "{conditionalPowerPrompt.power}"?</p>
+              <div className="conditional-power-buttons">
+                <button onClick={conditionalPowerPrompt.onYes} className="action-button">Yes</button>
+                <button onClick={conditionalPowerPrompt.onNo} className="action-button">No</button>
+              </div>
+            </div>
+          )}
+
           <div className="player-resources">
             <h3>Resources</h3>
             <p>Gold: {currentPlayer?.resources?.gold}</p>
             <p>Knowledge: {currentPlayer?.resources?.knowledge}</p>
             <p>Victory Points: {currentPlayer?.resources?.victoryPoints}</p>
             <p>Armies: {currentPlayer?.armies}</p>
+            <p>Draw card: {currentPlayer?.resources?.drawCards || 0}</p>
+            <p>Take card: {currentPlayer?.resources?.takeCards || 0}</p>
+            <p>Discard card: {currentPlayer?.resources?.discardCards || 0}</p>
+            <p>Exile card: {currentPlayer?.resources?.exileCards || 0}</p>
+            <p>Bury card: {currentPlayer?.resources?.buryCards || 0}</p>
+            <p>Fight: {currentPlayer?.resources?.fight || 0}</p>
+            <p>Outpost: {currentPlayer?.resources?.outpost || 0}</p>
           </div>
 
           <div className="guild-piles">
@@ -224,6 +374,13 @@ function App() {
           disabled={gameState?.phase !== 'playing'}
         >
           Consolidate
+        </button>
+        <button
+          onClick={handleEndTurnAction}
+          className="action-button"
+          disabled={gameState?.phase !== 'playing'}
+        >
+          End Turn
         </button>
       </div>
     </div>

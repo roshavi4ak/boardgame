@@ -2,7 +2,7 @@ export type Guild = 'military' | 'culture' | 'technology' | 'royal' | 'trade';
 export type Color = 'blue' | 'red' | 'green' | 'yellow' | 'purple';
 export type PlayerId = string;
 export type GamePhase = 'setup' | 'playing' | 'ended';
-export type ActionType = 'expand' | 'consolidate';
+export type ActionType = 'expand' | 'consolidate' | 'endTurn';
 
 export interface Card {
   id: string;
@@ -35,6 +35,13 @@ export interface Player {
     gold: number;
     knowledge: number;
     victoryPoints: number;
+    drawCards?: number;
+    takeCards?: number;
+    discardCards?: number;
+    exileCards?: number;
+    buryCards?: number;
+    fight?: number;
+    outpost?: number;
   };
   armies: number;
   outposts: number[];

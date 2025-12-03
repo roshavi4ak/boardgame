@@ -36,6 +36,13 @@ interface Player {
     gold: number;
     knowledge: number;
     victoryPoints: number;
+    drawCards?: number;
+    takeCards?: number;
+    discardCards?: number;
+    exileCards?: number;
+    buryCards?: number;
+    fight?: number;
+    outpost?: number;
   };
   armies: number;
   outposts: number[];
@@ -50,10 +57,12 @@ interface GameState {
   map: MapSpot[];
   createdAt: string;
   updatedAt: string;
+  pendingConditionalPowers?: { left: string, right: string, fullText: string }[];
+  pendingChoicePowers?: { choices: string[], fullText: string }[];
 }
 
 export interface GameAction {
-  type: 'expand' | 'consolidate';
+  type: 'expand' | 'consolidate' | 'endTurn';
   playerId: string;
   cardId?: string;
   targetSpotId?: number;
@@ -247,7 +256,14 @@ export class GameEngine {
       resources: {
         gold: 5,
         knowledge: 0,
-        victoryPoints: 0
+        victoryPoints: 0,
+        drawCards: 0,
+        takeCards: 0,
+        discardCards: 0,
+        exileCards: 0,
+        buryCards: 0,
+        fight: 0,
+        outpost: 0
       },
       armies: 0,
       outposts: []
@@ -290,6 +306,8 @@ export class GameEngine {
         return this.handleExpandAction(newState, action);
       case 'consolidate':
         return this.handleConsolidateAction(newState, action);
+      case 'endTurn':
+        return this.handleEndTurnAction(newState, action);
       default:
         return newState;
     }
@@ -311,19 +329,13 @@ export class GameEngine {
     guildPile.push(card);
 
     // Process card effects with power scaling
-    this.processCardEffects(currentPlayer, card, guildPile);
+    const { conditionalPowers, choicePowers } = this.processCardEffects(currentPlayer, card, guildPile);
 
-    // Handle army placement if card gives army
-    // Note: Armies are already added in processCardEffects, no need to add again
-    // if (card.power.includes('Army') || card.bonus.includes('Army')) {
-    //   // Store pending army placement for UI to handle
-    //   state.players[state.currentPlayerIndex].armies += 1;
-    //   // Army placement will be handled by UI interaction
-    // }
+    // Clear any existing pending powers and add new ones
+    state.pendingConditionalPowers = conditionalPowers.length > 0 ? [...conditionalPowers] : [];
+    state.pendingChoicePowers = choicePowers.length > 0 ? [...choicePowers] : [];
 
-    // End turn
-    state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
-
+    // Don't automatically end turn - let player decide when to end turn
     return state;
   }
 
@@ -353,13 +365,19 @@ export class GameEngine {
       currentPlayer.hand.push(currentPlayer.deck.pop()!);
     }
 
+    // Reset non-persistent resources to 0 at end of turn
+    this.resetNonPersistentResources(currentPlayer);
+
     // End turn
     state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
 
     return state;
   }
 
-  private processCardEffects(player: Player, card: Card, guildPile: Card[]): void {
+  private processCardEffects(player: Player, card: Card, guildPile: Card[]): {
+    conditionalPowers: { left: string, right: string, fullText: string }[],
+    choicePowers: { choices: string[], fullText: string }[]
+  } {
     // Determine power level based on position in guild pile
     // position is the card's position in the pile (1-based)
     const position = guildPile.length; // Current length after adding the card
@@ -374,37 +392,283 @@ export class GameEngine {
       powerText = card.power45;
     }
 
-    // Parse and execute the selected power
+    const conditionalPowers: { left: string, right: string, fullText: string }[] = [];
+    const choicePowers: { choices: string[], fullText: string }[] = [];
+
+    // Parse and execute the selected power (case-insensitive)
     const powerParts = powerText.split('.');
     powerParts.forEach(part => {
       const trimmed = part.trim();
-      if (trimmed === 'Army') {
-        player.armies += 1;
-      } else if (trimmed === 'Pay 1 Gold → Army') {
-        // This is an optional power, don't apply automatically
-      } else if (trimmed.includes('Gold') && !trimmed.includes('→')) {
-        player.resources.gold += 1;
-      } else if (trimmed.includes('Knowledge') && !trimmed.includes('→')) {
-        player.resources.knowledge += 1;
-      } else if (trimmed.includes('VP') && !trimmed.includes('→')) {
-        player.resources.victoryPoints += 1;
+
+      // Check if this is a conditional power
+      const conditionalPower = this.parseConditionalPower(trimmed);
+      if (conditionalPower) {
+        // Check if player can execute this conditional power
+        if (this.canExecuteConditionalPower(player, conditionalPower.left)) {
+          conditionalPowers.push({
+            left: conditionalPower.left,
+            right: conditionalPower.right,
+            fullText: trimmed
+          });
+        }
+      } else {
+        // Check if this is a choice power (contains " or ")
+        const choicePower = this.parseChoicePower(trimmed);
+        if (choicePower) {
+          // Add choice power for player to select
+          choicePowers.push({
+            choices: choicePower,
+            fullText: trimmed
+          });
+        } else {
+          // Handle non-conditional powers
+          const normalized = this.normalizeText(trimmed);
+
+          if (normalized === 'army') {
+            player.armies += 1;
+          } else if (this.textContains(trimmed, 'gold') && !trimmed.includes('→')) {
+            player.resources.gold += 1;
+          } else if (this.textContains(trimmed, 'knowledge') && !trimmed.includes('→')) {
+            player.resources.knowledge += 1;
+          } else if (this.textContains(trimmed, 'vp') && !trimmed.includes('→')) {
+            player.resources.victoryPoints += 1;
+          } else if (this.textContains(trimmed, 'draw') || this.textContains(trimmed, 'take') ||
+            this.textContains(trimmed, 'discard') || this.textContains(trimmed, 'exile') ||
+            this.textContains(trimmed, 'bury') || this.textContains(trimmed, 'fight')) {
+            // These will be handled by the new resource tracking system
+            this.updateResourceCounters(player, trimmed);
+          } else if (this.textContains(trimmed, 'army (x2)')) {
+            player.armies += 2;
+          }
+        }
       }
     });
 
-    // Process bonus effects (bonuses don't scale)
+    // Process bonus effects (bonuses don't scale) (case-insensitive)
     const bonusParts = card.bonus.split('.');
     bonusParts.forEach(part => {
       const trimmed = part.trim();
-      if (trimmed === 'Gain 1 Gold') {
-        player.resources.gold += 1;
-      } else if (trimmed === 'Gain 1 Knowledge') {
-        player.resources.knowledge += 1;
-      } else if (trimmed === 'Gain 1 VP') {
-        player.resources.victoryPoints += 1;
-      } else if (trimmed === 'Gain 1 Army') {
-        player.armies += 1;
+
+      // Check if this is a conditional power
+      const conditionalPower = this.parseConditionalPower(trimmed);
+      if (conditionalPower) {
+        // Check if player can execute this conditional power
+        if (this.canExecuteConditionalPower(player, conditionalPower.left)) {
+          conditionalPowers.push({
+            left: conditionalPower.left,
+            right: conditionalPower.right,
+            fullText: trimmed
+          });
+        }
+      } else {
+        // Check if this is a choice power (contains " or ")
+        const choicePower = this.parseChoicePower(trimmed);
+        if (choicePower) {
+          // Add choice power for player to select
+          choicePowers.push({
+            choices: choicePower,
+            fullText: trimmed
+          });
+        } else {
+          // Handle non-conditional bonuses
+          const normalized = this.normalizeText(trimmed);
+
+          if (normalized === 'gain 1 gold') {
+            player.resources.gold += 1;
+          } else if (normalized === 'gain 1 knowledge') {
+            player.resources.knowledge += 1;
+          } else if (normalized === 'gain 1 vp') {
+            player.resources.victoryPoints += 1;
+          } else if (normalized === 'gain 1 army') {
+            player.armies += 1;
+          } else if (this.textContains(trimmed, 'draw') || this.textContains(trimmed, 'take') ||
+            this.textContains(trimmed, 'discard') || this.textContains(trimmed, 'exile') ||
+            this.textContains(trimmed, 'bury') || this.textContains(trimmed, 'fight')) {
+            // These will be handled by the new resource tracking system
+            this.updateResourceCounters(player, trimmed);
+          }
+        }
       }
     });
+
+    return { conditionalPowers, choicePowers };
+  }
+
+  private normalizeText(text: string): string {
+    return text.toLowerCase().trim();
+  }
+
+  private textContains(text: string, keyword: string): boolean {
+    return this.normalizeText(text).includes(this.normalizeText(keyword));
+  }
+
+  private parseConditionalPower(powerText: string): { left: string, right: string } | null {
+    // Look for conditional powers in format "left -> right" or "left → right"
+    let arrowIndex = powerText.indexOf('→');
+    if (arrowIndex === -1) {
+      arrowIndex = powerText.indexOf('->');
+      if (arrowIndex === -1) return null;
+    }
+
+    const left = powerText.substring(0, arrowIndex).trim();
+    const right = powerText.substring(arrowIndex + (powerText[arrowIndex] === '→' ? 1 : 2)).trim();
+
+    return { left, right };
+  }
+
+  private parseChoicePower(powerText: string): string[] | null {
+    // Look for choice powers in format "option1 or option2 or option3"
+    const orIndex = powerText.indexOf(' or ');
+    if (orIndex === -1) return null;
+
+    // Split by " or " to get all choices
+    const choices = powerText.split(' or ').map(choice => choice.trim());
+    return choices.length > 1 ? choices : null;
+  }
+
+  private canExecuteConditionalPower(player: Player, leftPart: string): boolean {
+    // Check if player can execute the left part of conditional power
+    const normalizedLeft = this.normalizeText(leftPart);
+
+    if (normalizedLeft.includes('pay') && normalizedLeft.includes('gold')) {
+      // Check if player has enough gold
+      const goldMatch = normalizedLeft.match(/pay (\d+) gold/i);
+      if (goldMatch) {
+        const requiredGold = parseInt(goldMatch[1]);
+        return player.resources.gold >= requiredGold;
+      }
+      return player.resources.gold > 0;
+    }
+
+    // Add more condition checks here as needed
+    return true;
+  }
+
+  public executeConditionalPower(player: Player, leftPart: string, rightPart: string): void {
+    // Initialize resources if they don't exist
+    if (!player.resources.fight) player.resources.fight = 0;
+
+    // Execute the left part (cost) and right part (benefit)
+    const normalizedLeft = this.normalizeText(leftPart);
+    const normalizedRight = this.normalizeText(rightPart);
+
+    // Execute left part (cost)
+    if (normalizedLeft.includes('pay') && normalizedLeft.includes('gold')) {
+      const goldMatch = normalizedLeft.match(/pay (\d+) gold/i);
+      if (goldMatch) {
+        const goldToPay = parseInt(goldMatch[1]);
+        player.resources.gold -= goldToPay;
+      } else {
+        player.resources.gold -= 1; // Default to 1 if no number specified
+      }
+    }
+
+    // Execute right part (benefit)
+    if (normalizedRight.includes('fight')) {
+      player.resources.fight += 1;
+    } else if (normalizedRight.includes('army')) {
+      player.armies += 1;
+    } else if (normalizedRight.includes('gold')) {
+      const goldMatch = normalizedRight.match(/gain (\d+) gold/i);
+      if (goldMatch) {
+        const goldToGain = parseInt(goldMatch[1]);
+        player.resources.gold += goldToGain;
+      } else {
+        player.resources.gold += 1;
+      }
+    } else if (normalizedRight.includes('knowledge')) {
+      player.resources.knowledge += 1;
+    } else if (normalizedRight.includes('vp')) {
+      player.resources.victoryPoints += 1;
+    }
+    // Add more benefit executions as needed
+  }
+
+  public executeChoicePower(player: Player, choice: string): void {
+    // Initialize resources if they don't exist
+    if (!player.resources.drawCards) player.resources.drawCards = 0;
+    if (!player.resources.takeCards) player.resources.takeCards = 0;
+    if (!player.resources.fight) player.resources.fight = 0;
+
+    const normalizedChoice = this.normalizeText(choice);
+
+    // Execute the chosen option
+    if (normalizedChoice.includes('draw') && normalizedChoice.includes('card')) {
+      player.resources.drawCards += 1;
+    } else if (normalizedChoice.includes('take') && normalizedChoice.includes('card')) {
+      player.resources.takeCards += 1;
+    } else if (normalizedChoice.includes('gain') && normalizedChoice.includes('knowledge')) {
+      player.resources.knowledge += 1;
+    } else if (normalizedChoice.includes('gain') && normalizedChoice.includes('vp')) {
+      player.resources.victoryPoints += 1;
+    } else if (normalizedChoice.includes('gain') && normalizedChoice.includes('gold')) {
+      const goldMatch = normalizedChoice.match(/gain (\d+) gold/i);
+      if (goldMatch) {
+        const goldToGain = parseInt(goldMatch[1]);
+        player.resources.gold += goldToGain;
+      } else {
+        player.resources.gold += 1;
+      }
+    } else if (normalizedChoice.includes('fight')) {
+      player.resources.fight += 1;
+    } else if (normalizedChoice.includes('army')) {
+      player.armies += 1;
+    }
+    // Add more choice executions as needed
+  }
+
+  private updateResourceCounters(player: Player, actionText: string): void {
+    // Initialize resource counters if they don't exist
+    if (!player.resources.drawCards) player.resources.drawCards = 0;
+    if (!player.resources.takeCards) player.resources.takeCards = 0;
+    if (!player.resources.discardCards) player.resources.discardCards = 0;
+    if (!player.resources.exileCards) player.resources.exileCards = 0;
+    if (!player.resources.buryCards) player.resources.buryCards = 0;
+    if (!player.resources.fight) player.resources.fight = 0;
+    if (!player.resources.outpost) player.resources.outpost = 0;
+
+    // Update counters based on action text (case-insensitive)
+    const normalizedText = this.normalizeText(actionText);
+
+    if (normalizedText.includes('draw')) {
+      player.resources.drawCards += 1;
+    } else if (normalizedText.includes('take')) {
+      player.resources.takeCards += 1;
+    } else if (normalizedText.includes('discard')) {
+      player.resources.discardCards += 1;
+    } else if (normalizedText.includes('exile')) {
+      player.resources.exileCards += 1;
+    } else if (normalizedText.includes('bury')) {
+      player.resources.buryCards += 1;
+    } else if (normalizedText.includes('fight')) {
+      player.resources.fight += 1;
+    } else if (normalizedText.includes('outpost')) {
+      player.resources.outpost += 1;
+    }
+  }
+
+  private resetNonPersistentResources(player: Player): void {
+    // Only Gold and Victory Points persist between rounds
+    // Everything else resets to 0
+    player.resources.knowledge = 0;
+    player.resources.drawCards = 0;
+    player.resources.takeCards = 0;
+    player.resources.discardCards = 0;
+    player.resources.exileCards = 0;
+    player.resources.buryCards = 0;
+    player.resources.fight = 0;
+    player.resources.outpost = 0;
+  }
+
+  private handleEndTurnAction(state: GameState, _action: GameAction): GameState {
+    // Reset non-persistent resources to 0 at end of turn
+    const currentPlayer = state.players[state.currentPlayerIndex];
+    this.resetNonPersistentResources(currentPlayer);
+
+    // End turn
+    state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
+
+    return state;
   }
 
   private generateUUID(): string {
